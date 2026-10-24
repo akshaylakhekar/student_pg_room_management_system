@@ -1,0 +1,179 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Student Profile</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar h2 { margin: 0; }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 35px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.07);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            width: 30%;
+            background: #e2e8f0;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .button {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>PG Management System</h2>
+
+    <div>
+        <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
+        <a href="${pageContext.request.contextPath}/student/list">Students</a>
+    </div>
+</div>
+
+<div class="container">
+
+<c:choose>
+
+<c:when test="${not empty student}">
+
+    <div class="card">
+
+        <h1>${student.name}</h1>
+
+        <table>
+            <tr><th>Student ID</th><td>${student.id}</td></tr>
+            <tr><th>Email</th><td>${student.email}</td></tr>
+            <tr><th>Mobile</th><td>${student.mobile}</td></tr>
+            <tr><th>Guardian Mobile</th><td>${student.guardianMobile}</td></tr>
+            <tr><th>Address</th><td>${student.address}</td></tr>
+            <tr><th>ID Proof</th><td>${student.idProof}</td></tr>
+        </table>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Current Room</h2>
+
+        <c:choose>
+
+            <c:when test="${not empty currentAllocation}">
+
+                <table>
+                    <tr><th>Room</th><td>${currentAllocation.roomNumber}</td></tr>
+                    <tr><th>Rent</th><td>₹ ${monthlyRent}</td></tr>
+                    <tr><th>Allocation Date</th><td>${currentAllocation.allocationDate}</td></tr>
+                    <tr><th>Status</th><td>${currentAllocation.status}</td></tr>
+                    <tr><th>Total Paid</th><td>₹ ${totalPaid}</td></tr>
+                    <tr><th>Balance Due</th><td>₹ ${balanceDue}</td></tr>
+                </table>
+
+            </c:when>
+
+            <c:otherwise>
+                <p>No active room allocation.</p>
+            </c:otherwise>
+
+        </c:choose>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Actions</h2>
+
+        <a class="button"
+           href="${pageContext.request.contextPath}/student/edit?id=${student.id}">
+            Edit Profile
+        </a>
+
+        <a class="button"
+           href="${pageContext.request.contextPath}/complaint/student?studentId=${student.id}">
+            Complaints
+        </a>
+
+        <a class="button"
+           href="${pageContext.request.contextPath}/visitor/student?studentId=${student.id}">
+            Visitors
+        </a>
+
+        <c:if test="${not empty currentAllocation}">
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/payment/history?allocationId=${currentAllocation.id}">
+                Payment History
+            </a>
+
+        </c:if>
+
+    </div>
+
+</c:when>
+
+<c:otherwise>
+
+    <div class="card">
+        <h2>Student Not Found</h2>
+    </div>
+
+</c:otherwise>
+
+</c:choose>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Property;
+import com.pgmanagement.model.Room;
+import com.pgmanagement.service.PropertyService;
+import com.pgmanagement.service.RoomService;
+
+@Controller
+public class RoomController {
+
+    private final RoomService roomService;
+    private final PropertyService propertyService;
+
+    public RoomController(
+            RoomService roomService,
+            PropertyService propertyService) {
+
+        this.roomService =
+                roomService;
+
+        this.propertyService =
+                propertyService;
+    }
+
+    @GetMapping("/room/add")
+    public String showAddRoomForm(
+            Model model) {
+
+        List<Property> properties =
+                propertyService.getAllProperties();
+
+        model.addAttribute(
+                "room",
+                new Room()
+        );
+
+        model.addAttribute(
+                "properties",
+                properties
+        );
+
+        return "room-add";
+    }
+
+    @PostMapping("/room/save")
+    public String saveRoom(
+            @ModelAttribute Room room,
+            Model model) {
+
+        boolean saved =
+                roomService.addRoom(room);
+
+        if (saved) {
+
+            return "redirect:/room/list";
+        }
+
+        List<Property> properties =
+                propertyService.getAllProperties();
+
+        model.addAttribute(
+                "room",
+                room
+        );
+
+        model.addAttribute(
+                "properties",
+                properties
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                "Room could not be saved."
+        );
+
+        return "room-add";
+    }
+
+    @GetMapping("/room/list")
+    public String listRooms(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            @RequestParam(
+                    value = "errorMessage",
+                    required = false
+            )
+            String errorMessage,
+            Model model) {
+
+        List<Room> rooms;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            rooms =
+                    roomService.getAllRooms();
+
+        } else {
+
+            rooms =
+                    roomService.searchRooms(
+                            keyword.trim()
+                    );
+        }
+
+        model.addAttribute(
+                "rooms",
+                rooms
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                errorMessage
+        );
+
+        return "room-list";
+    }
+
+    @GetMapping("/room/edit")
+    public String showEditRoomForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Room room =
+                roomService.getRoomById(id);
+
+        if (room == null) {
+
+            return "redirect:/room/list"
+                    + "?errorMessage="
+                    + "Room record not found.";
+        }
+
+        List<Property> properties =
+                propertyService.getAllProperties();
+
+        model.addAttribute(
+                "room",
+                room
+        );
+
+        model.addAttribute(
+                "properties",
+                properties
+        );
+
+        return "room-edit";
+    }
+
+    @PostMapping("/room/update")
+    public String updateRoom(
+            @ModelAttribute Room room,
+            Model model) {
+
+        boolean updated =
+                roomService.updateRoom(room);
+
+        if (updated) {
+
+            return "redirect:/room/list";
+        }
+
+        List<Property> properties =
+                propertyService.getAllProperties();
+
+        model.addAttribute(
+                "room",
+                room
+        );
+
+        model.addAttribute(
+                "properties",
+                properties
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                "Room could not be updated because the record was not found."
+        );
+
+        return "room-edit";
+    }
+
+    @GetMapping("/room/delete")
+    public String deleteRoom(
+            @RequestParam("id") int id) {
+
+        Room room =
+                roomService.getRoomById(id);
+
+        if (room == null) {
+
+            return "redirect:/room/list"
+                    + "?errorMessage="
+                    + "Room record not found.";
+        }
+
+        boolean deleted =
+                roomService.deleteRoom(id);
+
+        if (deleted) {
+
+            return "redirect:/room/list";
+        }
+
+        return "redirect:/room/list"
+                + "?errorMessage="
+                + "Cannot delete room because allocation records exist.";
+    }
+}

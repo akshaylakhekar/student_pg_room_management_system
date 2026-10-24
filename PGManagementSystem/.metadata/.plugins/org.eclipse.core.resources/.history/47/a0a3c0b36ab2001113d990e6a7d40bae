@@ -1,0 +1,137 @@
+package com.pgmanagement.dao;
+
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.pgmanagement.model.Property;
+
+@Repository
+public class PropertyDAO {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public PropertyDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    // Property ko database me save karta hai
+    public boolean addProperty(Property property) {
+
+        String sql = "INSERT INTO properties "
+                   + "(property_name, address, owner_name, contact_number) "
+                   + "VALUES (?, ?, ?, ?)";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                property.getPropertyName(),
+                property.getAddress(),
+                property.getOwnerName(),
+                property.getContactNumber()
+        );
+
+        return rows > 0;
+    }
+
+    // Saari properties database se fetch karta hai
+    public List<Property> getAllProperties() {
+
+        String sql = "SELECT * FROM properties ORDER BY id DESC";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    Property property = new Property();
+
+                    property.setId(rs.getInt("id"));
+
+                    property.setPropertyName(
+                            rs.getString("property_name")
+                    );
+
+                    property.setAddress(
+                            rs.getString("address")
+                    );
+
+                    property.setOwnerName(
+                            rs.getString("owner_name")
+                    );
+
+                    property.setContactNumber(
+                            rs.getString("contact_number")
+                    );
+
+                    return property;
+                }
+        );
+    }
+
+    // ID ke basis par property fetch karta hai
+    public Property getPropertyById(int id) {
+
+        String sql = "SELECT * FROM properties WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(
+                sql,
+                (rs, rowNum) -> {
+
+                    Property property = new Property();
+
+                    property.setId(rs.getInt("id"));
+
+                    property.setPropertyName(
+                            rs.getString("property_name")
+                    );
+
+                    property.setAddress(
+                            rs.getString("address")
+                    );
+
+                    property.setOwnerName(
+                            rs.getString("owner_name")
+                    );
+
+                    property.setContactNumber(
+                            rs.getString("contact_number")
+                    );
+
+                    return property;
+                },
+                id
+        );
+    }
+
+    // Property update karta hai
+    public boolean updateProperty(Property property) {
+
+        String sql = "UPDATE properties SET "
+                   + "property_name = ?, "
+                   + "address = ?, "
+                   + "owner_name = ?, "
+                   + "contact_number = ? "
+                   + "WHERE id = ?";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                property.getPropertyName(),
+                property.getAddress(),
+                property.getOwnerName(),
+                property.getContactNumber(),
+                property.getId()
+        );
+
+        return rows > 0;
+    }
+
+    // Property delete karta hai
+    public boolean deleteProperty(int id) {
+
+        String sql = "DELETE FROM properties WHERE id = ?";
+
+        int rows = jdbcTemplate.update(sql, id);
+
+        return rows > 0;
+    }
+}

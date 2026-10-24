@@ -1,0 +1,91 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Property;
+import com.pgmanagement.service.PropertyService;
+
+@Controller
+public class PropertyController {
+
+    private final PropertyService propertyService;
+
+    // PropertyService Spring automatically inject karega
+    public PropertyController(PropertyService propertyService) {
+        this.propertyService = propertyService;
+    }
+
+    // Property add form show karta hai
+    @GetMapping("/property/add")
+    public String showAddPropertyForm() {
+        return "property-add";
+    }
+
+    // Property ko database me save karta hai
+    @PostMapping("/property/save")
+    public String saveProperty(
+            @ModelAttribute Property property) {
+
+        boolean saved =
+                propertyService.addProperty(property);
+
+        if (saved) {
+            return "redirect:/property/list";
+        }
+
+        return "property-add";
+    }
+
+    // Saari properties ki list show karta hai
+    @GetMapping("/property/list")
+    public String listProperties(Model model) {
+
+        List<Property> properties =
+                propertyService.getAllProperties();
+
+        model.addAttribute("properties", properties);
+
+        return "property-list";
+    }
+
+    // Property edit form show karta hai
+    @GetMapping("/property/edit")
+    public String showEditPropertyForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Property property =
+                propertyService.getPropertyById(id);
+
+        model.addAttribute("property", property);
+
+        return "property-edit";
+    }
+
+    // Property update karta hai
+    @PostMapping("/property/update")
+    public String updateProperty(
+            @ModelAttribute Property property) {
+
+        propertyService.updateProperty(property);
+
+        return "redirect:/property/list";
+    }
+
+    // Property delete karta hai
+    @GetMapping("/property/delete")
+    public String deleteProperty(
+            @RequestParam("id") int id) {
+
+        propertyService.deleteProperty(id);
+
+        return "redirect:/property/list";
+    }
+}

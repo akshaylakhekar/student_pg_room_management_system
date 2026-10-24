@@ -1,0 +1,169 @@
+package com.pgmanagement.service;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.RentPaymentDAO;
+import com.pgmanagement.model.RentPayment;
+
+@Service
+public class RentPaymentService {
+
+    private final RentPaymentDAO rentPaymentDAO;
+
+    public RentPaymentService(
+            RentPaymentDAO rentPaymentDAO) {
+
+        this.rentPaymentDAO =
+                rentPaymentDAO;
+    }
+
+
+    // =========================================================
+    // ADD PAYMENT
+    // =========================================================
+
+    public boolean addPayment(
+            RentPayment payment) {
+
+        boolean alreadyPaid =
+                rentPaymentDAO
+                        .hasPaymentForMonth(
+                                payment.getAllocationId(),
+                                payment.getMonthYear()
+                        );
+
+        if (alreadyPaid) {
+
+            return false;
+        }
+
+        return rentPaymentDAO.addPayment(
+                payment
+        );
+    }
+
+
+    // =========================================================
+    // GET ALL PAYMENTS
+    // =========================================================
+
+    public List<RentPayment>
+            getAllPayments() {
+
+        return rentPaymentDAO
+                .getAllPayments();
+    }
+
+
+    // =========================================================
+    // GET PAYMENTS BY ALLOCATION
+    // =========================================================
+
+    public List<RentPayment>
+            getPaymentsByAllocationId(
+                    int allocationId) {
+
+        return rentPaymentDAO
+                .getPaymentsByAllocationId(
+                        allocationId
+                );
+    }
+
+
+    // =========================================================
+    // CALCULATE TOTAL AMOUNT PAID
+    // =========================================================
+
+    public BigDecimal
+            getTotalAmountByAllocationId(
+                    int allocationId) {
+
+        List<RentPayment> payments =
+                rentPaymentDAO
+                        .getPaymentsByAllocationId(
+                                allocationId
+                        );
+
+        BigDecimal total =
+                BigDecimal.ZERO;
+
+        for (RentPayment payment : payments) {
+
+            if (payment.getAmount() != null) {
+
+                total =
+                        total.add(
+                                payment.getAmount()
+                        );
+            }
+        }
+
+        return total;
+    }
+
+
+    // =========================================================
+    // SEARCH PAYMENTS
+    // =========================================================
+
+    public List<RentPayment>
+            searchPayments(
+                    String keyword) {
+
+        return rentPaymentDAO
+                .searchPayments(
+                        keyword
+                );
+    }
+
+
+    // =========================================================
+    // GET PAYMENT BY ID
+    // =========================================================
+
+    public RentPayment getPaymentById(
+            int id) {
+
+        return rentPaymentDAO
+                .getPaymentById(id);
+    }
+
+
+    // =========================================================
+    // UPDATE PAYMENT
+    // =========================================================
+
+    public boolean updatePayment(
+            RentPayment payment) {
+
+        boolean alreadyPaid =
+                rentPaymentDAO
+                        .hasPaymentForMonthExceptId(
+                                payment.getAllocationId(),
+                                payment.getMonthYear(),
+                                payment.getId()
+                        );
+
+        if (alreadyPaid) {
+
+            return false;
+        }
+
+        return rentPaymentDAO
+                .updatePayment(payment);
+    }
+
+
+    // =========================================================
+    // DELETE PAYMENT
+    // =========================================================
+
+    public boolean deletePayment(int id) {
+
+        return rentPaymentDAO
+                .deletePayment(id);
+    }
+}

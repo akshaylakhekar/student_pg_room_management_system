@@ -1,0 +1,151 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Property;
+import com.pgmanagement.service.PropertyService;
+
+@Controller
+public class PropertyController {
+
+    private final PropertyService propertyService;
+
+    public PropertyController(
+            PropertyService propertyService) {
+
+        this.propertyService =
+                propertyService;
+    }
+
+    @GetMapping("/property/add")
+    public String showAddPropertyForm(
+            Model model) {
+
+        model.addAttribute(
+                "property",
+                new Property()
+        );
+
+        return "property-add";
+    }
+
+    @PostMapping("/property/save")
+    public String saveProperty(
+            @ModelAttribute Property property) {
+
+        boolean saved =
+                propertyService.addProperty(
+                        property
+                );
+
+        if (saved) {
+
+            return "redirect:/property/list";
+        }
+
+        return "property-add";
+    }
+
+    @GetMapping("/property/list")
+    public String listProperties(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            @RequestParam(
+                    value = "errorMessage",
+                    required = false
+            )
+            String errorMessage,
+            Model model) {
+
+        List<Property> properties;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            properties =
+                    propertyService
+                            .getAllProperties();
+
+        } else {
+
+            properties =
+                    propertyService
+                            .searchProperties(
+                                    keyword.trim()
+                            );
+        }
+
+        model.addAttribute(
+                "properties",
+                properties
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                errorMessage
+        );
+
+        return "property-list";
+    }
+
+    @GetMapping("/property/edit")
+    public String showEditPropertyForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Property property =
+                propertyService
+                        .getPropertyById(id);
+
+        model.addAttribute(
+                "property",
+                property
+        );
+
+        return "property-edit";
+    }
+
+    @PostMapping("/property/update")
+    public String updateProperty(
+            @ModelAttribute Property property) {
+
+        propertyService.updateProperty(
+                property
+        );
+
+        return "redirect:/property/list";
+    }
+
+    @GetMapping("/property/delete")
+    public String deleteProperty(
+            @RequestParam("id") int id) {
+
+        boolean deleted =
+                propertyService
+                        .deleteProperty(id);
+
+        if (deleted) {
+
+            return "redirect:/property/list";
+        }
+
+        return "redirect:/property/list"
+                + "?errorMessage="
+                + "Cannot delete property because rooms are linked to this property.";
+    }
+}

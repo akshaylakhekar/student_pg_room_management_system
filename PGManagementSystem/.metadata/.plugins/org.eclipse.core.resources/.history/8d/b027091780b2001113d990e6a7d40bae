@@ -1,0 +1,57 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.PropertyDAO;
+import com.pgmanagement.model.Property;
+
+@Service
+public class PropertyService {
+
+    private final PropertyDAO propertyDAO;
+
+    public PropertyService(
+            PropertyDAO propertyDAO) {
+
+        this.propertyDAO = propertyDAO;
+    }
+
+    public boolean addProperty(
+            Property property) {
+
+        return propertyDAO.addProperty(property);
+    }
+
+    public List<Property> getAllProperties() {
+
+        return propertyDAO.getAllProperties();
+    }
+
+    public List<Property> searchProperties(
+            String keyword) {
+
+        return propertyDAO.searchProperties(
+                keyword
+        );
+    }
+
+    public Property getPropertyById(int id) {
+
+        return propertyDAO.getPropertyById(id);
+    }
+
+    public boolean updateProperty(
+            Property property) {
+
+        return propertyDAO.updateProperty(
+                property
+        );
+    }
+
+    public boolean deleteProperty(int id) {
+
+        return propertyDAO.deleteProperty(id);
+    }
+}

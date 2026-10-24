@@ -1,0 +1,13 @@
+package com.pgmanagement.service;
+
+import com.pgmanagement.dao.StudentDAO;
+import com.pgmanagement.model.Student;
+
+public class StudentService {
+
+    private StudentDAO studentDAO = new StudentDAO();
+
+    public boolean addStudent(Student student) {
+        return studentDAO.addStudent(student);
+    }
+}

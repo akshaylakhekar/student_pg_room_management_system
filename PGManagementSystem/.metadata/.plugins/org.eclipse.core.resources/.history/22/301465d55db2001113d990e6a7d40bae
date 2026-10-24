@@ -1,0 +1,29 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.StudentDAO;
+import com.pgmanagement.model.Student;
+
+@Service
+public class StudentService {
+
+    private final StudentDAO studentDAO;
+
+    // StudentDAO Spring automatically inject karega
+    public StudentService(StudentDAO studentDAO) {
+        this.studentDAO = studentDAO;
+    }
+
+    // Student save karne ke liye
+    public boolean addStudent(Student student) {
+        return studentDAO.addStudent(student);
+    }
+
+    // Saare students fetch karne ke liye
+    public List<Student> getAllStudents() {
+        return studentDAO.getAllStudents();
+    }
+}

@@ -1,0 +1,156 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.RentPayment;
+import com.pgmanagement.model.RoomAllocation;
+import com.pgmanagement.service.RentPaymentService;
+import com.pgmanagement.service.RoomAllocationService;
+
+@Controller
+public class RentPaymentController {
+
+    private final RentPaymentService rentPaymentService;
+    private final RoomAllocationService roomAllocationService;
+
+    public RentPaymentController(
+            RentPaymentService rentPaymentService,
+            RoomAllocationService roomAllocationService) {
+
+        this.rentPaymentService =
+                rentPaymentService;
+
+        this.roomAllocationService =
+                roomAllocationService;
+    }
+
+    @GetMapping("/payment/add")
+    public String showAddPaymentForm(
+            Model model) {
+
+        List<RoomAllocation> allocations =
+                roomAllocationService
+                        .getAllAllocations();
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        model.addAttribute(
+                "payment",
+                new RentPayment()
+        );
+
+        return "payment-add";
+    }
+
+    @PostMapping("/payment/save")
+    public String savePayment(
+            @ModelAttribute RentPayment payment) {
+
+        boolean saved =
+                rentPaymentService
+                        .addPayment(payment);
+
+        if (saved) {
+
+            return "redirect:/payment/list";
+        }
+
+        return "payment-add";
+    }
+
+    @GetMapping("/payment/list")
+    public String listPayments(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            Model model) {
+
+        List<RentPayment> payments;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            payments =
+                    rentPaymentService
+                            .getAllPayments();
+
+        } else {
+
+            payments =
+                    rentPaymentService
+                            .searchPayments(
+                                    keyword.trim()
+                            );
+        }
+
+        model.addAttribute(
+                "payments",
+                payments
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        return "payment-list";
+    }
+
+    @GetMapping("/payment/edit")
+    public String showEditPaymentForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        RentPayment payment =
+                rentPaymentService
+                        .getPaymentById(id);
+
+        List<RoomAllocation> allocations =
+                roomAllocationService
+                        .getAllAllocations();
+
+        model.addAttribute(
+                "payment",
+                payment
+        );
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        return "payment-edit";
+    }
+
+    @PostMapping("/payment/update")
+    public String updatePayment(
+            @ModelAttribute RentPayment payment) {
+
+        rentPaymentService
+                .updatePayment(payment);
+
+        return "redirect:/payment/list";
+    }
+
+    @GetMapping("/payment/delete")
+    public String deletePayment(
+            @RequestParam("id") int id) {
+
+        rentPaymentService
+                .deletePayment(id);
+
+        return "redirect:/payment/list";
+    }
+}

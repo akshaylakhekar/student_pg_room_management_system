@@ -1,0 +1,73 @@
+package com.pgmanagement.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Admin;
+import com.pgmanagement.service.AdminService;
+
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+public class AdminController {
+
+    private final AdminService adminService;
+
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
+    }
+
+    @GetMapping("/admin/login")
+    public String showLoginPage() {
+
+        return "admin-login";
+    }
+
+    @PostMapping("/admin/login")
+    public String login(
+            @RequestParam("username") String username,
+            @RequestParam("password") String password,
+            HttpSession session,
+            Model model) {
+
+        Admin admin =
+                adminService.login(
+                        username,
+                        password
+                );
+
+        if (admin != null) {
+
+            session.setAttribute(
+                    "admin",
+                    admin
+            );
+
+            session.setAttribute(
+                    "role",
+                    "ADMIN"
+            );
+
+            return "redirect:/admin/dashboard";
+        }
+
+        model.addAttribute(
+                "errorMessage",
+                "Invalid username or password."
+        );
+
+        return "admin-login";
+    }
+
+    @GetMapping("/admin/logout")
+    public String logout(
+            HttpSession session) {
+
+        session.invalidate();
+
+        return "redirect:/admin/login";
+    }
+}

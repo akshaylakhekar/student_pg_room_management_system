@@ -1,0 +1,235 @@
+package com.pgmanagement.dao;
+
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.pgmanagement.model.Complaint;
+
+@Repository
+public class ComplaintDAO {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public ComplaintDAO(JdbcTemplate jdbcTemplate) {
+
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public boolean addComplaint(
+            Complaint complaint) {
+
+        String sql =
+                "INSERT INTO complaints "
+              + "(student_id, category, description, "
+              + "status, created_at) "
+              + "VALUES (?, ?, ?, ?, ?)";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                complaint.getStudentId(),
+                complaint.getCategory(),
+                complaint.getDescription(),
+                complaint.getStatus(),
+                complaint.getCreatedAt()
+        );
+
+        return rows > 0;
+    }
+
+    public List<Complaint>
+            getAllComplaints() {
+
+        String sql =
+                "SELECT * FROM complaints "
+              + "ORDER BY id DESC";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    Complaint complaint =
+                            new Complaint();
+
+                    complaint.setId(
+                            rs.getInt("id")
+                    );
+
+                    complaint.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    complaint.setCategory(
+                            rs.getString("category")
+                    );
+
+                    complaint.setDescription(
+                            rs.getString("description")
+                    );
+
+                    complaint.setStatus(
+                            rs.getString("status")
+                    );
+
+                    if (rs.getDate(
+                            "created_at") != null) {
+
+                        complaint.setCreatedAt(
+                                rs.getDate(
+                                        "created_at"
+                                ).toLocalDate()
+                        );
+                    }
+
+                    return complaint;
+                }
+        );
+    }
+
+    public List<Complaint>
+            searchComplaints(
+                    String keyword) {
+
+        String sql =
+                "SELECT * FROM complaints "
+              + "WHERE CAST(student_id AS CHAR) LIKE ? "
+              + "OR category LIKE ? "
+              + "OR description LIKE ? "
+              + "OR status LIKE ? "
+              + "ORDER BY id DESC";
+
+        String searchKeyword =
+                "%" + keyword + "%";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    Complaint complaint =
+                            new Complaint();
+
+                    complaint.setId(
+                            rs.getInt("id")
+                    );
+
+                    complaint.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    complaint.setCategory(
+                            rs.getString("category")
+                    );
+
+                    complaint.setDescription(
+                            rs.getString("description")
+                    );
+
+                    complaint.setStatus(
+                            rs.getString("status")
+                    );
+
+                    if (rs.getDate(
+                            "created_at") != null) {
+
+                        complaint.setCreatedAt(
+                                rs.getDate(
+                                        "created_at"
+                                ).toLocalDate()
+                        );
+                    }
+
+                    return complaint;
+                },
+                searchKeyword,
+                searchKeyword,
+                searchKeyword,
+                searchKeyword
+        );
+    }
+
+    public Complaint getComplaintById(
+            int id) {
+
+        String sql =
+                "SELECT * FROM complaints "
+              + "WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(
+                sql,
+                (rs, rowNum) -> {
+
+                    Complaint complaint =
+                            new Complaint();
+
+                    complaint.setId(
+                            rs.getInt("id")
+                    );
+
+                    complaint.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    complaint.setCategory(
+                            rs.getString("category")
+                    );
+
+                    complaint.setDescription(
+                            rs.getString("description")
+                    );
+
+                    complaint.setStatus(
+                            rs.getString("status")
+                    );
+
+                    if (rs.getDate(
+                            "created_at") != null) {
+
+                        complaint.setCreatedAt(
+                                rs.getDate(
+                                        "created_at"
+                                ).toLocalDate()
+                        );
+                    }
+
+                    return complaint;
+                },
+                id
+        );
+    }
+
+    public boolean updateComplaint(
+            Complaint complaint) {
+
+        String sql =
+                "UPDATE complaints SET "
+              + "student_id = ?, "
+              + "category = ?, "
+              + "description = ?, "
+              + "status = ? "
+              + "WHERE id = ?";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                complaint.getStudentId(),
+                complaint.getCategory(),
+                complaint.getDescription(),
+                complaint.getStatus(),
+                complaint.getId()
+        );
+
+        return rows > 0;
+    }
+
+    public boolean deleteComplaint(int id) {
+
+        String sql =
+                "DELETE FROM complaints "
+              + "WHERE id = ?";
+
+        int rows =
+                jdbcTemplate.update(sql, id);
+
+        return rows > 0;
+    }
+}

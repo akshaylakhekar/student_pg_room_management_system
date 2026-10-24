@@ -1,0 +1,240 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <title>Payment History</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f4f7fb;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 18px 40px;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.07);
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: #eff6ff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .amount {
+            font-size: 25px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .table-box {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: #1e293b;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 11px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        @media(max-width:700px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <h2>PG Management System</h2>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+
+    <h1>Payment History</h1>
+
+    <p>
+        Allocation ID:
+        <strong>${allocationId}</strong>
+    </p>
+
+    <c:if test="${not empty allocation}">
+
+        <p>
+            Student:
+            <strong>${allocation.studentName}</strong>
+        </p>
+
+        <p>
+            Room:
+            <strong>${allocation.roomNumber}</strong>
+        </p>
+
+    </c:if>
+
+</div>
+
+<div class="summary">
+
+    <div class="summary-card">
+
+        <p>Monthly Rent</p>
+
+        <div class="amount">
+            ₹ ${monthlyRent}
+        </div>
+
+    </div>
+
+    <div class="summary-card">
+
+        <p>Total Paid</p>
+
+        <div class="amount">
+            ₹ ${totalAmount}
+        </div>
+
+    </div>
+
+    <div class="summary-card">
+
+        <p>Balance Due</p>
+
+        <div class="amount">
+            ₹ ${balanceDue}
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<div class="card table-box">
+
+<h2>Payment Records</h2>
+
+<c:choose>
+
+<c:when test="${not empty payments}">
+
+<table>
+
+<tr>
+    <th>ID</th>
+    <th>Amount</th>
+    <th>Date</th>
+    <th>Month</th>
+    <th>Status</th>
+    <th>Actions</th>
+</tr>
+
+<c:forEach var="payment"
+           items="${payments}">
+
+<tr>
+
+<td>${payment.id}</td>
+<td>₹ ${payment.amount}</td>
+<td>${payment.paymentDate}</td>
+<td>${payment.monthYear}</td>
+<td>${payment.paymentStatus}</td>
+
+<td>
+
+<a href="${pageContext.request.contextPath}/payment/receipt?id=${payment.id}">
+    Receipt
+</a>
+
+<a href="${pageContext.request.contextPath}/payment/edit?id=${payment.id}">
+    Edit
+</a>
+
+<a href="${pageContext.request.contextPath}/payment/delete?id=${payment.id}"
+   onclick="return confirm('Delete this payment?');">
+    Delete
+</a>
+
+</td>
+
+</tr>
+
+</c:forEach>
+
+</table>
+
+</c:when>
+
+<c:otherwise>
+
+<p>No payment history found.</p>
+
+</c:otherwise>
+
+</c:choose>
+
+</div>
+
+<br>
+
+<a href="${pageContext.request.contextPath}/payment/list">
+    ← Payment List
+</a>
+
+</div>
+
+</body>
+</html>

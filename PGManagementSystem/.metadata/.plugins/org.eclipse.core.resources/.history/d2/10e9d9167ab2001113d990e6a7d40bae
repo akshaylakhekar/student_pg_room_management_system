@@ -1,0 +1,101 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Student Profile</title>
+
+</head>
+
+<body>
+
+    <h2>Student Profile</h2>
+
+    <c:choose>
+
+        <c:when test="${not empty student}">
+
+            <table border="1"
+                   cellpadding="10"
+                   cellspacing="0">
+
+                <tr>
+                    <th>Student ID</th>
+                    <td>${student.id}</td>
+                </tr>
+
+                <tr>
+                    <th>Name</th>
+                    <td>${student.name}</td>
+                </tr>
+
+                <tr>
+                    <th>Email</th>
+                    <td>${student.email}</td>
+                </tr>
+
+                <tr>
+                    <th>Mobile</th>
+                    <td>${student.mobile}</td>
+                </tr>
+
+                <tr>
+                    <th>Guardian Mobile</th>
+                    <td>${student.guardianMobile}</td>
+                </tr>
+
+                <tr>
+                    <th>Address</th>
+                    <td>${student.address}</td>
+                </tr>
+
+                <tr>
+                    <th>ID Proof</th>
+                    <td>${student.idProof}</td>
+                </tr>
+
+            </table>
+
+            <br>
+
+            <a href="${pageContext.request.contextPath}/student/edit?id=${student.id}">
+                Edit Student
+            </a>
+
+            <br><br>
+
+            <a href="${pageContext.request.contextPath}/student/list">
+                Back to Student List
+            </a>
+
+            <br><br>
+
+            <a href="${pageContext.request.contextPath}/dashboard">
+                Back to Dashboard
+            </a>
+
+        </c:when>
+
+        <c:otherwise>
+
+            <p>
+                Student not found.
+            </p>
+
+            <br>
+
+            <a href="${pageContext.request.contextPath}/student/list">
+                Back to Student List
+            </a>
+
+        </c:otherwise>
+
+    </c:choose>
+
+</body>
+
+</html>

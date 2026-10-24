@@ -1,0 +1,364 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Room;
+import com.pgmanagement.model.RoomAllocation;
+import com.pgmanagement.model.Student;
+import com.pgmanagement.service.RentPaymentService;
+import com.pgmanagement.service.RoomAllocationService;
+import com.pgmanagement.service.RoomService;
+import com.pgmanagement.service.StudentService;
+
+@Controller
+public class RoomAllocationController {
+
+    private final RoomAllocationService roomAllocationService;
+    private final StudentService studentService;
+    private final RoomService roomService;
+    private final RentPaymentService rentPaymentService;
+
+    public RoomAllocationController(
+            RoomAllocationService roomAllocationService,
+            StudentService studentService,
+            RoomService roomService,
+            RentPaymentService rentPaymentService) {
+
+        this.roomAllocationService =
+                roomAllocationService;
+
+        this.studentService =
+                studentService;
+
+        this.roomService =
+                roomService;
+
+        this.rentPaymentService =
+                rentPaymentService;
+    }
+
+    @GetMapping("/allocation/add")
+    public String showAddAllocationForm(
+            Model model) {
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        List<Room> rooms =
+                roomService.getAvailableRooms();
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "rooms",
+                rooms
+        );
+
+        model.addAttribute(
+                "allocation",
+                new RoomAllocation()
+        );
+
+        return "allocation-add";
+    }
+
+    @PostMapping("/allocation/save")
+    public String saveAllocation(
+            @ModelAttribute RoomAllocation allocation,
+            Model model) {
+
+        boolean saved =
+                roomAllocationService
+                        .addAllocation(
+                                allocation
+                        );
+
+        if (saved) {
+
+            return "redirect:/allocation/list";
+        }
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        List<Room> rooms =
+                roomService.getAvailableRooms();
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "rooms",
+                rooms
+        );
+
+        model.addAttribute(
+                "allocation",
+                allocation
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                "This student already has an active room allocation or the allocation could not be saved."
+        );
+
+        return "allocation-add";
+    }
+
+    @GetMapping("/allocation/list")
+    public String listAllocations(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            @RequestParam(
+                    value = "errorMessage",
+                    required = false
+            )
+            String errorMessage,
+            Model model) {
+
+        List<RoomAllocation> allocations;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            allocations =
+                    roomAllocationService
+                            .getAllAllocations();
+
+        } else {
+
+            allocations =
+                    roomAllocationService
+                            .searchAllocations(
+                                    keyword.trim()
+                            );
+        }
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                errorMessage
+        );
+
+        return "allocation-list";
+    }
+
+    @GetMapping("/allocation/edit")
+    public String showEditAllocationForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        RoomAllocation allocation =
+                roomAllocationService
+                        .getAllocationById(id);
+
+        if (allocation == null) {
+
+            return "redirect:/allocation/list"
+                    + "?errorMessage="
+                    + "Allocation record not found.";
+        }
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        List<Room> rooms =
+                roomService.getAvailableRooms();
+
+        boolean currentRoomExists =
+                false;
+
+        for (Room room : rooms) {
+
+            if (room.getId()
+                    == allocation.getRoomId()) {
+
+                currentRoomExists = true;
+
+                break;
+            }
+        }
+
+        if (!currentRoomExists) {
+
+            Room currentRoom =
+                    roomService.getRoomById(
+                            allocation.getRoomId()
+                    );
+
+            if (currentRoom != null) {
+
+                rooms.add(currentRoom);
+            }
+        }
+
+        model.addAttribute(
+                "allocation",
+                allocation
+        );
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "rooms",
+                rooms
+        );
+
+        return "allocation-edit";
+    }
+
+    @PostMapping("/allocation/update")
+    public String updateAllocation(
+            @ModelAttribute RoomAllocation allocation,
+            Model model) {
+
+        boolean updated =
+                roomAllocationService
+                        .updateAllocation(
+                                allocation
+                        );
+
+        if (updated) {
+
+            return "redirect:/allocation/list";
+        }
+
+        RoomAllocation currentAllocation =
+                roomAllocationService
+                        .getAllocationById(
+                                allocation.getId()
+                        );
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        List<Room> rooms =
+                roomService.getAvailableRooms();
+
+        if (currentAllocation != null) {
+
+            boolean currentRoomExists =
+                    false;
+
+            for (Room room : rooms) {
+
+                if (room.getId()
+                        == currentAllocation.getRoomId()) {
+
+                    currentRoomExists = true;
+
+                    break;
+                }
+            }
+
+            if (!currentRoomExists) {
+
+                Room currentRoom =
+                        roomService.getRoomById(
+                                currentAllocation.getRoomId()
+                        );
+
+                if (currentRoom != null) {
+
+                    rooms.add(currentRoom);
+                }
+            }
+        }
+
+        model.addAttribute(
+                "allocation",
+                allocation
+        );
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "rooms",
+                rooms
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                "Allocation could not be updated. The allocation may not exist or the student may already have another active allocation."
+        );
+
+        return "allocation-edit";
+    }
+
+    @GetMapping("/allocation/checkout")
+    public String checkoutAllocation(
+            @RequestParam("id") int id) {
+
+        boolean checkedOut =
+                roomAllocationService
+                        .checkoutAllocation(id);
+
+        if (checkedOut) {
+
+            return "redirect:/allocation/list";
+        }
+
+        return "redirect:/allocation/list"
+                + "?errorMessage="
+                + "Allocation could not be checked out. It may not exist or may already be checked out.";
+    }
+
+    @GetMapping("/allocation/delete")
+    public String deleteAllocation(
+            @RequestParam("id") int id) {
+
+        boolean hasPayments =
+                rentPaymentService
+                        .hasPaymentsForAllocation(id);
+
+        if (hasPayments) {
+
+            return "redirect:/allocation/list"
+                    + "?errorMessage="
+                    + "Cannot delete allocation because payment records exist.";
+        }
+
+        boolean deleted =
+                roomAllocationService
+                        .deleteAllocation(id);
+
+        if (deleted) {
+
+            return "redirect:/allocation/list";
+        }
+
+        return "redirect:/allocation/list"
+                + "?errorMessage="
+                + "Allocation could not be deleted because the record was not found.";
+    }
+}

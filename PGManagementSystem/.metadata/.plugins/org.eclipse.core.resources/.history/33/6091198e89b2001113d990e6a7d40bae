@@ -1,0 +1,459 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Dashboard - PG Management System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .navbar h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .navbar a:hover {
+            color: #60a5fa;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1250px;
+            margin: 35px auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 8px;
+            font-size: 32px;
+        }
+
+        .page-header p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
+            gap: 22px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            transition: 0.25s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+        }
+
+        .dashboard-card {
+            min-height: 180px;
+        }
+
+        .dashboard-card h3 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .number {
+            font-size: 38px;
+            font-weight: bold;
+            color: #2563eb;
+            margin: 12px 0;
+        }
+
+        .dashboard-card p {
+            color: #64748b;
+            margin-bottom: 18px;
+        }
+
+        .card-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .card-link:hover {
+            text-decoration: underline;
+        }
+
+        .quick-section {
+            margin-top: 40px;
+        }
+
+        .quick-section h2 {
+            margin-bottom: 20px;
+        }
+
+        .quick-actions {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 18px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            margin-top: 60px;
+            background: #1e293b;
+            color: white;
+            text-align: center;
+            padding: 22px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 18px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .navbar a {
+                margin: 0 8px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+            .page-header h1 {
+                font-size: 26px;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+            }
+
+            .button {
+                text-align: center;
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <h2>PG Management System</h2>
+
+        <div>
+
+            <a href="${pageContext.request.contextPath}/">
+                Home
+            </a>
+
+            <a href="${pageContext.request.contextPath}/dashboard">
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="container">
+
+        <div class="page-header">
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                Welcome to the PG Management System.
+                Manage your complete PG operations from here.
+            </p>
+
+        </div>
+
+
+        <div class="card-container">
+
+
+            <div class="card dashboard-card">
+
+                <h3>Students</h3>
+
+                <div class="number">
+                    ${studentCount}
+                </div>
+
+                <p>
+                    Total registered students
+                </p>
+
+                <a class="card-link"
+                   href="${pageContext.request.contextPath}/student/list">
+
+                    View Students →
+
+                </a>
+
+            </div>
+
+
+            <div class="card dashboard-card">
+
+                <h3>Properties</h3>
+
+                <div class="number">
+                    ${propertyCount}
+                </div>
+
+                <p>
+                    Total PG properties
+                </p>
+
+                <a class="card-link"
+                   href="${pageContext.request.contextPath}/property/list">
+
+                    View Properties →
+
+                </a>
+
+            </div>
+
+
+            <div class="card dashboard-card">
+
+                <h3>Rooms</h3>
+
+                <div class="number">
+                    ${roomCount}
+                </div>
+
+                <p>
+                    Total rooms
+                </p>
+
+                <a class="card-link"
+                   href="${pageContext.request.contextPath}/room/list">
+
+                    View Rooms →
+
+                </a>
+
+            </div>
+
+
+            <div class="card dashboard-card">
+
+                <h3>Active Allocations</h3>
+
+                <div class="number">
+                    ${activeAllocationCount}
+                </div>
+
+                <p>
+                    Currently occupied allocations
+                </p>
+
+                <a class="card-link"
+                   href="${pageContext.request.contextPath}/allocation/list">
+
+                    View Allocations →
+
+                </a>
+
+            </div>
+
+
+            <div class="card dashboard-card">
+
+                <h3>Pending Rent</h3>
+
+                <div class="number">
+                    ${pendingRentCount}
+                </div>
+
+                <p>
+                    Pending payment records
+                </p>
+
+                <a class="card-link"
+                   href="${pageContext.request.contextPath}/payment/list">
+
+                    View Payments →
+
+                </a>
+
+            </div>
+
+
+            <div class="card dashboard-card">
+
+                <h3>Complaints</h3>
+
+                <div class="number">
+                    ${complaintCount}
+                </div>
+
+                <p>
+                    Total complaints
+                </p>
+
+                <a class="card-link"
+                   href="${pageContext.request.contextPath}/complaint/list">
+
+                    View Complaints →
+
+                </a>
+
+            </div>
+
+
+            <div class="card dashboard-card">
+
+                <h3>Visitors</h3>
+
+                <div class="number">
+                    ${visitorCount}
+                </div>
+
+                <p>
+                    Total visitor records
+                </p>
+
+                <a class="card-link"
+                   href="${pageContext.request.contextPath}/visitor/list">
+
+                    View Visitors →
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="quick-section">
+
+            <h2>Quick Actions</h2>
+
+            <div class="quick-actions">
+
+                <a class="button"
+                   href="${pageContext.request.contextPath}/student/add">
+                    Add Student
+                </a>
+
+                <a class="button"
+                   href="${pageContext.request.contextPath}/property/add">
+                    Add Property
+                </a>
+
+                <a class="button"
+                   href="${pageContext.request.contextPath}/room/add">
+                    Add Room
+                </a>
+
+                <a class="button"
+                   href="${pageContext.request.contextPath}/allocation/add">
+                    Allocate Room
+                </a>
+
+                <a class="button"
+                   href="${pageContext.request.contextPath}/payment/add">
+                    Add Payment
+                </a>
+
+                <a class="button"
+                   href="${pageContext.request.contextPath}/complaint/add">
+                    Add Complaint
+                </a>
+
+                <a class="button"
+                   href="${pageContext.request.contextPath}/visitor/add">
+                    Add Visitor
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+
+        PG Management System
+        <br>
+
+        Admin Dashboard
+
+    </div>
+
+</body>
+
+</html>

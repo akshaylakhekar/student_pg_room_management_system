@@ -1,0 +1,79 @@
+package com.pgmanagement.dao;
+
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.pgmanagement.model.Student;
+
+@Repository
+public class StudentDAO {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public StudentDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    // Student ko database me save karta hai
+    public boolean addStudent(Student student) {
+
+        String sql = "INSERT INTO students "
+                   + "(name, email, mobile, guardian_mobile, address, id_proof) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                student.getName(),
+                student.getEmail(),
+                student.getMobile(),
+                student.getGuardianMobile(),
+                student.getAddress(),
+                student.getIdProof()
+        );
+
+        System.out.println("Student Inserted Rows: " + rows);
+
+        return rows > 0;
+    }
+
+    // Saare students database se fetch karta hai
+    public List<Student> getAllStudents() {
+
+        String sql = "SELECT * FROM students ORDER BY id DESC";
+
+        System.out.println("Executing SQL: " + sql);
+
+        List<Student> students = jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    Student student = new Student();
+
+                    student.setId(rs.getInt("id"));
+                    student.setName(rs.getString("name"));
+                    student.setEmail(rs.getString("email"));
+                    student.setMobile(rs.getString("mobile"));
+
+                    student.setGuardianMobile(
+                            rs.getString("guardian_mobile")
+                    );
+
+                    student.setAddress(
+                            rs.getString("address")
+                    );
+
+                    student.setIdProof(
+                            rs.getString("id_proof")
+                    );
+
+                    return student;
+                }
+        );
+
+        System.out.println("Students Found: " + students.size());
+
+        return students;
+    }
+}

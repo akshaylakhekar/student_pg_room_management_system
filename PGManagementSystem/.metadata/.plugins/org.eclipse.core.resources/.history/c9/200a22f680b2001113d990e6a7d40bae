@@ -1,0 +1,180 @@
+package com.pgmanagement.service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.RoomAllocationDAO;
+import com.pgmanagement.model.RoomAllocation;
+
+@Service
+public class RoomAllocationService {
+
+    private final RoomAllocationDAO roomAllocationDAO;
+    private final RoomService roomService;
+
+    public RoomAllocationService(
+            RoomAllocationDAO roomAllocationDAO,
+            RoomService roomService) {
+
+        this.roomAllocationDAO = roomAllocationDAO;
+        this.roomService = roomService;
+    }
+
+    public boolean addAllocation(RoomAllocation allocation) {
+
+        if (roomAllocationDAO.hasActiveAllocation(
+                allocation.getStudentId())) {
+
+            return false;
+        }
+
+        boolean saved =
+                roomAllocationDAO.addAllocation(allocation);
+
+        if (saved
+                && "Active".equalsIgnoreCase(
+                        allocation.getStatus())) {
+
+            roomService.updateRoomStatus(
+                    allocation.getRoomId(),
+                    "Occupied"
+            );
+        }
+
+        return saved;
+    }
+
+    public List<RoomAllocation> getAllAllocations() {
+        return roomAllocationDAO.getAllAllocations();
+    }
+
+    public List<RoomAllocation> searchAllocations(
+            String keyword) {
+
+        return roomAllocationDAO.searchAllocations(keyword);
+    }
+
+    public RoomAllocation getAllocationById(int id) {
+        return roomAllocationDAO.getAllocationById(id);
+    }
+
+    public boolean updateAllocation(
+            RoomAllocation allocation) {
+
+        RoomAllocation oldAllocation =
+                roomAllocationDAO.getAllocationById(
+                        allocation.getId()
+                );
+
+        if (oldAllocation == null) {
+            return false;
+        }
+
+        if (roomAllocationDAO.hasActiveAllocation(
+                allocation.getStudentId())
+                && oldAllocation.getStudentId()
+                        != allocation.getStudentId()) {
+
+            return false;
+        }
+
+        boolean updated =
+                roomAllocationDAO.updateAllocation(
+                        allocation
+                );
+
+        if (!updated) {
+            return false;
+        }
+
+        if (oldAllocation.getRoomId()
+                != allocation.getRoomId()) {
+
+            roomService.updateRoomStatus(
+                    oldAllocation.getRoomId(),
+                    "Available"
+            );
+        }
+
+        if ("Active".equalsIgnoreCase(
+                allocation.getStatus())) {
+
+            roomService.updateRoomStatus(
+                    allocation.getRoomId(),
+                    "Occupied"
+            );
+
+        } else {
+
+            roomService.updateRoomStatus(
+                    allocation.getRoomId(),
+                    "Available"
+            );
+        }
+
+        return true;
+    }
+
+    public boolean checkoutAllocation(int allocationId) {
+
+        RoomAllocation allocation =
+                roomAllocationDAO.getAllocationById(
+                        allocationId
+                );
+
+        if (allocation == null) {
+            return false;
+        }
+
+        if (!"Active".equalsIgnoreCase(
+                allocation.getStatus())) {
+
+            return false;
+        }
+
+        allocation.setCheckoutDate(
+                LocalDate.now()
+        );
+
+        allocation.setStatus(
+                "Checked Out"
+        );
+
+        boolean updated =
+                roomAllocationDAO.updateAllocation(
+                        allocation
+                );
+
+        if (!updated) {
+            return false;
+        }
+
+        roomService.updateRoomStatus(
+                allocation.getRoomId(),
+                "Available"
+        );
+
+        return true;
+    }
+
+    public boolean deleteAllocation(int id) {
+
+        RoomAllocation allocation =
+                roomAllocationDAO.getAllocationById(id);
+
+        boolean deleted =
+                roomAllocationDAO.deleteAllocation(id);
+
+        if (deleted && allocation != null) {
+
+            roomService.updateRoomStatus(
+                    allocation.getRoomId(),
+                    "Available"
+            );
+        }
+
+        return deleted;
+    }
+}

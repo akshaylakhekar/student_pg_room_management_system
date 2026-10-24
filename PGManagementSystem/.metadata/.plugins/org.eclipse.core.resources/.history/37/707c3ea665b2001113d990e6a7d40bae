@@ -1,0 +1,5 @@
+package com.pgmanagement.model;
+
+public class Complaint {
+
+}

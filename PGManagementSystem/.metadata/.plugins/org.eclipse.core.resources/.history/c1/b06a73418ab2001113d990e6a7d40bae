@@ -1,0 +1,192 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>PG Management System</title>
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/style.css">
+
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <h2>PG Management System</h2>
+
+        <div>
+
+            <a href="${pageContext.request.contextPath}/">
+                Home
+            </a>
+
+            <a href="${pageContext.request.contextPath}/dashboard">
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="container">
+
+        <div class="card"
+             style="text-align:center; padding:60px 30px;">
+
+            <h1>
+                Welcome to PG Management System
+            </h1>
+
+            <p style="font-size:18px; color:#555;">
+
+                Manage students, properties, rooms,
+                allocations, rent payments, complaints
+                and visitors from one place.
+
+            </p>
+
+            <br>
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/dashboard">
+
+                Open Dashboard
+
+            </a>
+
+        </div>
+
+        <br><br>
+
+        <h2>
+            System Features
+        </h2>
+
+        <div class="card-container">
+
+            <div class="card">
+
+                <h3>Students</h3>
+
+                <p>
+                    Manage student information,
+                    profiles and student records.
+                </p>
+
+                <a href="${pageContext.request.contextPath}/student/list">
+                    Manage Students →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Properties</h3>
+
+                <p>
+                    Manage PG properties,
+                    owners and contact information.
+                </p>
+
+                <a href="${pageContext.request.contextPath}/property/list">
+                    Manage Properties →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Rooms</h3>
+
+                <p>
+                    Manage rooms, rent amounts,
+                    capacity and availability.
+                </p>
+
+                <a href="${pageContext.request.contextPath}/room/list">
+                    Manage Rooms →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Room Allocations</h3>
+
+                <p>
+                    Allocate rooms to students
+                    and manage checkouts.
+                </p>
+
+                <a href="${pageContext.request.contextPath}/allocation/list">
+                    Manage Allocations →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Rent Payments</h3>
+
+                <p>
+                    Track rent payments,
+                    payment history and receipts.
+                </p>
+
+                <a href="${pageContext.request.contextPath}/payment/list">
+                    Manage Payments →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Complaints</h3>
+
+                <p>
+                    Record and manage
+                    student complaints.
+                </p>
+
+                <a href="${pageContext.request.contextPath}/complaint/list">
+                    Manage Complaints →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Visitors</h3>
+
+                <p>
+                    Track visitor entry and
+                    exit records.
+                </p>
+
+                <a href="${pageContext.request.contextPath}/visitor/list">
+                    Manage Visitors →
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+
+        PG Management System
+        <br>
+        Java + Spring MVC + Spring JDBC + MySQL
+
+    </div>
+
+</body>
+
+</html>

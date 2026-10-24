@@ -1,0 +1,131 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Room</title>
+</head>
+<body>
+
+    <h2>Add Room</h2>
+
+    <form action="${pageContext.request.contextPath}/room/save"
+          method="post">
+
+        <label>Property:</label><br>
+
+        <select name="propertyId" required>
+
+            <option value="">
+                -- Select Property --
+            </option>
+
+            <c:forEach var="property" items="${properties}">
+
+                <option value="${property.id}">
+                    ${property.propertyName}
+                </option>
+
+            </c:forEach>
+
+        </select>
+
+        <br><br>
+
+
+        <label>Room Number:</label><br>
+
+        <input type="text"
+               name="roomNumber"
+               required>
+
+        <br><br>
+
+
+        <label>Capacity:</label><br>
+
+        <input type="number"
+               name="capacity"
+               min="1"
+               required>
+
+        <br><br>
+
+
+        <label>Sharing Type:</label><br>
+
+        <select name="sharingType" required>
+
+            <option value="">
+                -- Select Sharing Type --
+            </option>
+
+            <option value="Single">
+                Single
+            </option>
+
+            <option value="Double">
+                Double
+            </option>
+
+            <option value="Triple">
+                Triple
+            </option>
+
+            <option value="Four Sharing">
+                Four Sharing
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <label>Rent Amount:</label><br>
+
+        <input type="number"
+               name="rentAmount"
+               step="0.01"
+               min="0"
+               required>
+
+        <br><br>
+
+
+        <label>Status:</label><br>
+
+        <select name="status" required>
+
+            <option value="Available">
+                Available
+            </option>
+
+            <option value="Occupied">
+                Occupied
+            </option>
+
+            <option value="Maintenance">
+                Maintenance
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <button type="submit">
+            Save Room
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="${pageContext.request.contextPath}/room/list">
+        View Room List
+    </a>
+
+</body>
+</html>

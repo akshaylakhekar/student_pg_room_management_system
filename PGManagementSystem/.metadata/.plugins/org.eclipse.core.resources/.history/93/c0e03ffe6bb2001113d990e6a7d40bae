@@ -1,0 +1,105 @@
+package com.pgmanagement.controller;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Complaint;
+import com.pgmanagement.model.Student;
+import com.pgmanagement.service.ComplaintService;
+import com.pgmanagement.service.StudentService;
+
+@Controller
+public class ComplaintController {
+
+    private final ComplaintService complaintService;
+    private final StudentService studentService;
+
+    public ComplaintController(
+            ComplaintService complaintService,
+            StudentService studentService) {
+
+        this.complaintService = complaintService;
+        this.studentService = studentService;
+    }
+
+    @GetMapping("/complaint/add")
+    public String showAddComplaintForm(Model model) {
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        model.addAttribute("students", students);
+        model.addAttribute("complaint", new Complaint());
+
+        return "complaint-add";
+    }
+
+    @PostMapping("/complaint/save")
+    public String saveComplaint(
+            @ModelAttribute Complaint complaint) {
+
+        complaint.setCreatedAt(LocalDate.now());
+
+        boolean saved =
+                complaintService.addComplaint(complaint);
+
+        if (saved) {
+            return "redirect:/complaint/list";
+        }
+
+        return "complaint-add";
+    }
+
+    @GetMapping("/complaint/list")
+    public String listComplaints(Model model) {
+
+        List<Complaint> complaints =
+                complaintService.getAllComplaints();
+
+        model.addAttribute("complaints", complaints);
+
+        return "complaint-list";
+    }
+
+    @GetMapping("/complaint/edit")
+    public String showEditComplaintForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Complaint complaint =
+                complaintService.getComplaintById(id);
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        model.addAttribute("complaint", complaint);
+        model.addAttribute("students", students);
+
+        return "complaint-edit";
+    }
+
+    @PostMapping("/complaint/update")
+    public String updateComplaint(
+            @ModelAttribute Complaint complaint) {
+
+        complaintService.updateComplaint(complaint);
+
+        return "redirect:/complaint/list";
+    }
+
+    @GetMapping("/complaint/delete")
+    public String deleteComplaint(
+            @RequestParam("id") int id) {
+
+        complaintService.deleteComplaint(id);
+
+        return "redirect:/complaint/list";
+    }
+}

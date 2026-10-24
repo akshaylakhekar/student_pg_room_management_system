@@ -1,0 +1,21 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import com.pgmanagement.dao.StudentDAO;
+import com.pgmanagement.model.Student;
+
+public class StudentService {
+
+    private StudentDAO studentDAO = new StudentDAO();
+
+    // Student save karne ke liye
+    public boolean addStudent(Student student) {
+        return studentDAO.addStudent(student);
+    }
+
+    // Saare students fetch karne ke liye
+    public List<Student> getAllStudents() {
+        return studentDAO.getAllStudents();
+    }
+}

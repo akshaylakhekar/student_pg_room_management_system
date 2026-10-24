@@ -1,0 +1,64 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.RentPaymentDAO;
+import com.pgmanagement.model.RentPayment;
+
+@Service
+public class RentPaymentService {
+
+    private final RentPaymentDAO rentPaymentDAO;
+
+    public RentPaymentService(
+            RentPaymentDAO rentPaymentDAO) {
+
+        this.rentPaymentDAO =
+                rentPaymentDAO;
+    }
+
+    public boolean addPayment(
+            RentPayment payment) {
+
+        return rentPaymentDAO.addPayment(
+                payment
+        );
+    }
+
+    public List<RentPayment>
+            getAllPayments() {
+
+        return rentPaymentDAO
+                .getAllPayments();
+    }
+
+    public List<RentPayment>
+            searchPayments(
+                    String keyword) {
+
+        return rentPaymentDAO
+                .searchPayments(keyword);
+    }
+
+    public RentPayment getPaymentById(
+            int id) {
+
+        return rentPaymentDAO
+                .getPaymentById(id);
+    }
+
+    public boolean updatePayment(
+            RentPayment payment) {
+
+        return rentPaymentDAO
+                .updatePayment(payment);
+    }
+
+    public boolean deletePayment(int id) {
+
+        return rentPaymentDAO
+                .deletePayment(id);
+    }
+}

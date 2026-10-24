@@ -1,0 +1,129 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Room Allocation</title>
+</head>
+<body>
+
+    <h2>Edit Room Allocation</h2>
+
+    <form action="${pageContext.request.contextPath}/allocation/update"
+          method="post">
+
+        <input type="hidden"
+               name="id"
+               value="${allocation.id}">
+
+
+        <label>Student:</label><br>
+
+        <select name="studentId" required>
+
+            <c:forEach var="student" items="${students}">
+
+                <option value="${student.id}"
+                    <c:if test="${student.id == allocation.studentId}">
+                        selected
+                    </c:if>
+                >
+                    ${student.name} - ${student.email}
+                </option>
+
+            </c:forEach>
+
+        </select>
+
+        <br><br>
+
+
+        <label>Room:</label><br>
+
+        <select name="roomId" required>
+
+            <c:forEach var="room" items="${rooms}">
+
+                <option value="${room.id}"
+                    <c:if test="${room.id == allocation.roomId}">
+                        selected
+                    </c:if>
+                >
+                    Room ${room.roomNumber}
+                    - ${room.sharingType}
+                    - ₹${room.rentAmount}
+                    - ${room.status}
+                </option>
+
+            </c:forEach>
+
+        </select>
+
+        <br><br>
+
+
+        <label>Allocation Date:</label><br>
+
+        <input type="date"
+               name="allocationDate"
+               value="${allocation.allocationDate}"
+               required>
+
+        <br><br>
+
+
+        <label>Checkout Date:</label><br>
+
+        <input type="date"
+               name="checkoutDate"
+               value="${allocation.checkoutDate}">
+
+        <br><br>
+
+
+        <label>Status:</label><br>
+
+        <select name="status" required>
+
+            <option value="Active"
+                <c:if test="${allocation.status == 'Active'}">
+                    selected
+                </c:if>>
+                Active
+            </option>
+
+            <option value="Completed"
+                <c:if test="${allocation.status == 'Completed'}">
+                    selected
+                </c:if>>
+                Completed
+            </option>
+
+            <option value="Cancelled"
+                <c:if test="${allocation.status == 'Cancelled'}">
+                    selected
+                </c:if>>
+                Cancelled
+            </option>
+
+        </select>
+
+        <br><br>
+
+
+        <button type="submit">
+            Update Allocation
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="${pageContext.request.contextPath}/allocation/list">
+        Back to Allocation List
+    </a>
+
+</body>
+</html>

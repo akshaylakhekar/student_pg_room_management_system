@@ -1,0 +1,140 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.RoomAllocationDAO;
+import com.pgmanagement.dao.RoomDAO;
+import com.pgmanagement.model.RoomAllocation;
+
+@Service
+public class RoomAllocationService {
+
+    private final RoomAllocationDAO allocationDAO;
+    private final RoomDAO roomDAO;
+
+    public RoomAllocationService(
+            RoomAllocationDAO allocationDAO,
+            RoomDAO roomDAO) {
+
+        this.allocationDAO = allocationDAO;
+        this.roomDAO = roomDAO;
+    }
+
+    public boolean addAllocation(
+            RoomAllocation allocation) {
+
+        boolean saved =
+                allocationDAO.addAllocation(
+                        allocation
+                );
+
+        if (saved) {
+
+            roomDAO.updateRoomStatus(
+                    allocation.getRoomId(),
+                    "Occupied"
+            );
+        }
+
+        return saved;
+    }
+
+    public List<RoomAllocation>
+    getAllAllocations() {
+
+        return allocationDAO
+                .getAllAllocations();
+    }
+
+    public RoomAllocation
+    getAllocationById(int id) {
+
+        return allocationDAO
+                .getAllocationById(id);
+    }
+
+    public List<RoomAllocation>
+    searchAllocations(String keyword) {
+
+        return allocationDAO
+                .searchAllocations(keyword);
+    }
+
+    public boolean updateAllocation(
+            RoomAllocation allocation) {
+
+        RoomAllocation oldAllocation =
+                allocationDAO
+                        .getAllocationById(
+                                allocation.getId()
+                        );
+
+        if (oldAllocation == null) {
+
+            return false;
+        }
+
+        boolean updated =
+                allocationDAO.updateAllocation(
+                        allocation
+                );
+
+        if (updated) {
+
+            if (oldAllocation.getRoomId()
+                    != allocation.getRoomId()) {
+
+                roomDAO.updateRoomStatus(
+                        oldAllocation.getRoomId(),
+                        "Available"
+                );
+
+                roomDAO.updateRoomStatus(
+                        allocation.getRoomId(),
+                        "Occupied"
+                );
+            }
+
+            if ("Cancelled".equalsIgnoreCase(
+                    allocation.getStatus())
+                    || "Checked Out"
+                    .equalsIgnoreCase(
+                            allocation.getStatus())) {
+
+                roomDAO.updateRoomStatus(
+                        allocation.getRoomId(),
+                        "Available"
+                );
+            }
+        }
+
+        return updated;
+    }
+
+    public boolean deleteAllocation(int id) {
+
+        RoomAllocation allocation =
+                allocationDAO
+                        .getAllocationById(id);
+
+        if (allocation == null) {
+
+            return false;
+        }
+
+        boolean deleted =
+                allocationDAO.deleteAllocation(id);
+
+        if (deleted) {
+
+            roomDAO.updateRoomStatus(
+                    allocation.getRoomId(),
+                    "Available"
+            );
+        }
+
+        return deleted;
+    }
+}

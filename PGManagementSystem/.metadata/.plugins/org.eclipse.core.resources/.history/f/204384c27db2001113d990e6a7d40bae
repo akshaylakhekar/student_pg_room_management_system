@@ -1,0 +1,239 @@
+package com.pgmanagement.controller;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.RentPayment;
+import com.pgmanagement.model.RoomAllocation;
+import com.pgmanagement.model.Student;
+import com.pgmanagement.service.RentPaymentService;
+import com.pgmanagement.service.RoomAllocationService;
+import com.pgmanagement.service.StudentService;
+
+@Controller
+public class StudentController {
+
+    private final StudentService studentService;
+    private final RoomAllocationService roomAllocationService;
+    private final RentPaymentService rentPaymentService;
+
+    public StudentController(
+            StudentService studentService,
+            RoomAllocationService roomAllocationService,
+            RentPaymentService rentPaymentService) {
+
+        this.studentService = studentService;
+        this.roomAllocationService =
+                roomAllocationService;
+        this.rentPaymentService =
+                rentPaymentService;
+    }
+
+    @GetMapping("/student/add")
+    public String showAddStudentForm(Model model) {
+
+        model.addAttribute(
+                "student",
+                new Student()
+        );
+
+        return "student-add";
+    }
+
+    @PostMapping("/student/save")
+    public String saveStudent(
+            @ModelAttribute Student student) {
+
+        boolean saved =
+                studentService.addStudent(
+                        student
+                );
+
+        if (saved) {
+
+            return "redirect:/student/list";
+        }
+
+        return "student-add";
+    }
+
+    @GetMapping("/student/list")
+    public String listStudents(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            Model model) {
+
+        List<Student> students;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            students =
+                    studentService
+                            .getAllStudents();
+
+        } else {
+
+            students =
+                    studentService.searchStudents(
+                            keyword.trim()
+                    );
+        }
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        return "student-list";
+    }
+
+    @GetMapping("/student/profile")
+    public String showStudentProfile(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Student student =
+                studentService.getStudentById(id);
+
+        List<RoomAllocation> allocations =
+                roomAllocationService
+                        .getAllAllocations();
+
+        RoomAllocation currentAllocation =
+                null;
+
+        if (allocations != null) {
+
+            for (RoomAllocation allocation
+                    : allocations) {
+
+                if (allocation.getStudentId() == id
+                        && "Active".equalsIgnoreCase(
+                                allocation.getStatus())) {
+
+                    currentAllocation =
+                            allocation;
+
+                    break;
+                }
+            }
+        }
+
+        BigDecimal monthlyRent =
+                BigDecimal.ZERO;
+
+        BigDecimal totalPaid =
+                BigDecimal.ZERO;
+
+        BigDecimal balanceDue =
+                BigDecimal.ZERO;
+
+        if (currentAllocation != null) {
+
+            if (currentAllocation
+                    .getRentAmount() != null) {
+
+                monthlyRent =
+                        currentAllocation
+                                .getRentAmount();
+            }
+
+            totalPaid =
+                    rentPaymentService
+                            .getTotalAmountByAllocationId(
+                                    currentAllocation.getId()
+                            );
+
+            balanceDue =
+                    monthlyRent.subtract(
+                            totalPaid
+                    );
+
+            if (balanceDue.compareTo(
+                    BigDecimal.ZERO) < 0) {
+
+                balanceDue =
+                        BigDecimal.ZERO;
+            }
+        }
+
+        model.addAttribute(
+                "student",
+                student
+        );
+
+        model.addAttribute(
+                "currentAllocation",
+                currentAllocation
+        );
+
+        model.addAttribute(
+                "monthlyRent",
+                monthlyRent
+        );
+
+        model.addAttribute(
+                "totalPaid",
+                totalPaid
+        );
+
+        model.addAttribute(
+                "balanceDue",
+                balanceDue
+        );
+
+        return "student-profile";
+    }
+
+    @GetMapping("/student/edit")
+    public String showEditStudentForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Student student =
+                studentService.getStudentById(id);
+
+        model.addAttribute(
+                "student",
+                student
+        );
+
+        return "student-edit";
+    }
+
+    @PostMapping("/student/update")
+    public String updateStudent(
+            @ModelAttribute Student student) {
+
+        studentService.updateStudent(
+                student
+        );
+
+        return "redirect:/student/list";
+    }
+
+    @GetMapping("/student/delete")
+    public String deleteStudent(
+            @RequestParam("id") int id) {
+
+        studentService.deleteStudent(id);
+
+        return "redirect:/student/list";
+    }
+}

@@ -1,0 +1,231 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Dashboard - PG Management System</title>
+
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/style.css">
+
+</head>
+
+<body>
+
+    <div class="navbar">
+
+        <h2>PG Management System</h2>
+
+        <div>
+
+            <a href="${pageContext.request.contextPath}/">
+                Home
+            </a>
+
+            <a href="${pageContext.request.contextPath}/dashboard">
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="container">
+
+        <h1>Admin Dashboard</h1>
+
+        <p>
+            Welcome to the PG Management System.
+            Manage your complete PG operations from here.
+        </p>
+
+        <br>
+
+        <div class="card-container">
+
+            <div class="card">
+
+                <h3>Students</h3>
+
+                <div class="number">
+                    ${studentCount}
+                </div>
+
+                <p>Total registered students</p>
+
+                <a href="${pageContext.request.contextPath}/student/list">
+                    View Students →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Properties</h3>
+
+                <div class="number">
+                    ${propertyCount}
+                </div>
+
+                <p>Total PG properties</p>
+
+                <a href="${pageContext.request.contextPath}/property/list">
+                    View Properties →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Rooms</h3>
+
+                <div class="number">
+                    ${roomCount}
+                </div>
+
+                <p>Total rooms</p>
+
+                <a href="${pageContext.request.contextPath}/room/list">
+                    View Rooms →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Active Allocations</h3>
+
+                <div class="number">
+                    ${activeAllocationCount}
+                </div>
+
+                <p>Currently occupied allocations</p>
+
+                <a href="${pageContext.request.contextPath}/allocation/list">
+                    View Allocations →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Pending Rent</h3>
+
+                <div class="number">
+                    ${pendingRentCount}
+                </div>
+
+                <p>Pending payment records</p>
+
+                <a href="${pageContext.request.contextPath}/payment/list">
+                    View Payments →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Complaints</h3>
+
+                <div class="number">
+                    ${complaintCount}
+                </div>
+
+                <p>Total complaints</p>
+
+                <a href="${pageContext.request.contextPath}/complaint/list">
+                    View Complaints →
+                </a>
+
+            </div>
+
+            <div class="card">
+
+                <h3>Visitors</h3>
+
+                <div class="number">
+                    ${visitorCount}
+                </div>
+
+                <p>Total visitor records</p>
+
+                <a href="${pageContext.request.contextPath}/visitor/list">
+                    View Visitors →
+                </a>
+
+            </div>
+
+        </div>
+
+        <br><br>
+
+        <h2>Quick Actions</h2>
+
+        <div class="card">
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/student/add">
+                Add Student
+            </a>
+
+            &nbsp;
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/property/add">
+                Add Property
+            </a>
+
+            &nbsp;
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/room/add">
+                Add Room
+            </a>
+
+            &nbsp;
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/allocation/add">
+                Allocate Room
+            </a>
+
+            &nbsp;
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/payment/add">
+                Add Payment
+            </a>
+
+            <br><br>
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/complaint/add">
+                Add Complaint
+            </a>
+
+            &nbsp;
+
+            <a class="button"
+               href="${pageContext.request.contextPath}/visitor/add">
+                Add Visitor
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="footer">
+
+        PG Management System
+        <br>
+        Admin Dashboard
+
+    </div>
+
+</body>
+
+</html>

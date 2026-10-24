@@ -1,0 +1,137 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Room;
+import com.pgmanagement.model.RoomAllocation;
+import com.pgmanagement.model.Student;
+import com.pgmanagement.service.RoomAllocationService;
+import com.pgmanagement.service.RoomService;
+import com.pgmanagement.service.StudentService;
+
+@Controller
+public class RoomAllocationController {
+
+    private final RoomAllocationService roomAllocationService;
+    private final StudentService studentService;
+    private final RoomService roomService;
+
+    public RoomAllocationController(
+            RoomAllocationService roomAllocationService,
+            StudentService studentService,
+            RoomService roomService) {
+
+        this.roomAllocationService = roomAllocationService;
+        this.studentService = studentService;
+        this.roomService = roomService;
+    }
+
+    @GetMapping("/allocation/add")
+    public String showAddAllocationForm(Model model) {
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        List<Room> rooms =
+                roomService.getAllRooms();
+
+        model.addAttribute("students", students);
+        model.addAttribute("rooms", rooms);
+        model.addAttribute(
+                "allocation",
+                new RoomAllocation()
+        );
+
+        return "allocation-add";
+    }
+
+    @PostMapping("/allocation/save")
+    public String saveAllocation(
+            @ModelAttribute RoomAllocation allocation) {
+
+        boolean saved =
+                roomAllocationService
+                        .addAllocation(allocation);
+
+        if (saved) {
+            return "redirect:/allocation/list";
+        }
+
+        return "allocation-add";
+    }
+
+    @GetMapping("/allocation/list")
+    public String listAllocations(Model model) {
+
+        List<RoomAllocation> allocations =
+                roomAllocationService
+                        .getAllAllocations();
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        return "allocation-list";
+    }
+
+    @GetMapping("/allocation/edit")
+    public String showEditAllocationForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        RoomAllocation allocation =
+                roomAllocationService
+                        .getAllocationById(id);
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        List<Room> rooms =
+                roomService.getAllRooms();
+
+        model.addAttribute(
+                "allocation",
+                allocation
+        );
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "rooms",
+                rooms
+        );
+
+        return "allocation-edit";
+    }
+
+    @PostMapping("/allocation/update")
+    public String updateAllocation(
+            @ModelAttribute RoomAllocation allocation) {
+
+        roomAllocationService
+                .updateAllocation(allocation);
+
+        return "redirect:/allocation/list";
+    }
+
+    @GetMapping("/allocation/delete")
+    public String deleteAllocation(
+            @RequestParam("id") int id) {
+
+        roomAllocationService
+                .deleteAllocation(id);
+
+        return "redirect:/allocation/list";
+    }
+}

@@ -1,0 +1,64 @@
+package com.pgmanagement.model;
+
+import java.time.LocalDate;
+
+public class RoomAllocation {
+
+    private int id;
+    private int studentId;
+    private int roomId;
+    private LocalDate allocationDate;
+    private LocalDate checkoutDate;
+    private String status;
+
+    public RoomAllocation() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
+
+    public LocalDate getAllocationDate() {
+        return allocationDate;
+    }
+
+    public void setAllocationDate(LocalDate allocationDate) {
+        this.allocationDate = allocationDate;
+    }
+
+    public LocalDate getCheckoutDate() {
+        return checkoutDate;
+    }
+
+    public void setCheckoutDate(LocalDate checkoutDate) {
+        this.checkoutDate = checkoutDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}

@@ -1,0 +1,159 @@
+package com.pgmanagement.dao;
+
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.pgmanagement.model.Room;
+
+@Repository
+public class RoomDAO {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public RoomDAO(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    // Room ko database me save karta hai
+    public boolean addRoom(Room room) {
+
+        String sql = "INSERT INTO rooms "
+                   + "(property_id, room_number, capacity, sharing_type, rent_amount, status) "
+                   + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                room.getPropertyId(),
+                room.getRoomNumber(),
+                room.getCapacity(),
+                room.getSharingType(),
+                room.getRentAmount(),
+                room.getStatus()
+        );
+
+        return rows > 0;
+    }
+
+    // Saare rooms database se fetch karta hai
+    public List<Room> getAllRooms() {
+
+        String sql = "SELECT * FROM rooms ORDER BY id DESC";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    Room room = new Room();
+
+                    room.setId(rs.getInt("id"));
+
+                    room.setPropertyId(
+                            rs.getInt("property_id")
+                    );
+
+                    room.setRoomNumber(
+                            rs.getString("room_number")
+                    );
+
+                    room.setCapacity(
+                            rs.getInt("capacity")
+                    );
+
+                    room.setSharingType(
+                            rs.getString("sharing_type")
+                    );
+
+                    room.setRentAmount(
+                            rs.getBigDecimal("rent_amount")
+                    );
+
+                    room.setStatus(
+                            rs.getString("status")
+                    );
+
+                    return room;
+                }
+        );
+    }
+
+    // ID ke basis par room fetch karta hai
+    public Room getRoomById(int id) {
+
+        String sql = "SELECT * FROM rooms WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(
+                sql,
+                (rs, rowNum) -> {
+
+                    Room room = new Room();
+
+                    room.setId(rs.getInt("id"));
+
+                    room.setPropertyId(
+                            rs.getInt("property_id")
+                    );
+
+                    room.setRoomNumber(
+                            rs.getString("room_number")
+                    );
+
+                    room.setCapacity(
+                            rs.getInt("capacity")
+                    );
+
+                    room.setSharingType(
+                            rs.getString("sharing_type")
+                    );
+
+                    room.setRentAmount(
+                            rs.getBigDecimal("rent_amount")
+                    );
+
+                    room.setStatus(
+                            rs.getString("status")
+                    );
+
+                    return room;
+                },
+                id
+        );
+    }
+
+    // Room update karta hai
+    public boolean updateRoom(Room room) {
+
+        String sql = "UPDATE rooms SET "
+                   + "property_id = ?, "
+                   + "room_number = ?, "
+                   + "capacity = ?, "
+                   + "sharing_type = ?, "
+                   + "rent_amount = ?, "
+                   + "status = ? "
+                   + "WHERE id = ?";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                room.getPropertyId(),
+                room.getRoomNumber(),
+                room.getCapacity(),
+                room.getSharingType(),
+                room.getRentAmount(),
+                room.getStatus(),
+                room.getId()
+        );
+
+        return rows > 0;
+    }
+
+    // Room delete karta hai
+    public boolean deleteRoom(int id) {
+
+        String sql = "DELETE FROM rooms WHERE id = ?";
+
+        int rows = jdbcTemplate.update(sql, id);
+
+        return rows > 0;
+    }
+}

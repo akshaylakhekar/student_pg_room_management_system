@@ -1,0 +1,52 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Property</title>
+</head>
+<body>
+
+    <h2>Add Property</h2>
+
+    <form action="${pageContext.request.contextPath}/property/save"
+          method="post">
+
+        <label>Property Name:</label><br>
+        <input type="text"
+               name="propertyName"
+               required>
+        <br><br>
+
+        <label>Address:</label><br>
+        <textarea name="address"
+                  required></textarea>
+        <br><br>
+
+        <label>Owner Name:</label><br>
+        <input type="text"
+               name="ownerName"
+               required>
+        <br><br>
+
+        <label>Contact Number:</label><br>
+        <input type="text"
+               name="contactNumber"
+               required>
+        <br><br>
+
+        <button type="submit">
+            Save Property
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="${pageContext.request.contextPath}/property/list">
+        View Property List
+    </a>
+
+</body>
+</html>

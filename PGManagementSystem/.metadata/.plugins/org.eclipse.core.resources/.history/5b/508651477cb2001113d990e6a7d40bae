@@ -1,0 +1,351 @@
+package com.pgmanagement.controller;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.RentPayment;
+import com.pgmanagement.model.RoomAllocation;
+import com.pgmanagement.service.RentPaymentService;
+import com.pgmanagement.service.RoomAllocationService;
+
+@Controller
+public class RentPaymentController {
+
+    private final RentPaymentService rentPaymentService;
+    private final RoomAllocationService roomAllocationService;
+
+    public RentPaymentController(
+            RentPaymentService rentPaymentService,
+            RoomAllocationService roomAllocationService) {
+
+        this.rentPaymentService = rentPaymentService;
+        this.roomAllocationService = roomAllocationService;
+    }
+
+    @GetMapping("/payment/add")
+    public String showAddPaymentForm(Model model) {
+
+        List<RoomAllocation> allocations =
+                roomAllocationService.getAllAllocations();
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        model.addAttribute(
+                "payment",
+                new RentPayment()
+        );
+
+        return "payment-add";
+    }
+
+    @PostMapping("/payment/save")
+    public String savePayment(
+            @ModelAttribute RentPayment payment,
+            Model model) {
+
+        boolean saved =
+                rentPaymentService.addPayment(
+                        payment
+                );
+
+        if (saved) {
+            return "redirect:/payment/list";
+        }
+
+        List<RoomAllocation> allocations =
+                roomAllocationService.getAllAllocations();
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        model.addAttribute(
+                "payment",
+                payment
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                "Payment for this allocation and month already exists."
+        );
+
+        return "payment-add";
+    }
+
+    @GetMapping("/payment/list")
+    public String listPayments(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            Model model) {
+
+        List<RentPayment> payments;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            payments =
+                    rentPaymentService
+                            .getAllPayments();
+
+        } else {
+
+            payments =
+                    rentPaymentService
+                            .searchPayments(
+                                    keyword.trim()
+                            );
+        }
+
+        model.addAttribute(
+                "payments",
+                payments
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        return "payment-list";
+    }
+
+    @GetMapping("/payment/history")
+    public String paymentHistory(
+            @RequestParam("allocationId")
+            int allocationId,
+            Model model) {
+
+        List<RentPayment> payments =
+                rentPaymentService
+                        .getPaymentsByAllocationId(
+                                allocationId
+                        );
+
+        BigDecimal totalAmount =
+                rentPaymentService
+                        .getTotalAmountByAllocationId(
+                                allocationId
+                        );
+
+        RoomAllocation allocation =
+                roomAllocationService
+                        .getAllocationById(
+                                allocationId
+                        );
+
+        BigDecimal monthlyRent =
+                BigDecimal.ZERO;
+
+        if (allocation != null
+                && allocation.getRentAmount() != null) {
+
+            monthlyRent =
+                    allocation.getRentAmount();
+        }
+
+        BigDecimal balanceDue =
+                monthlyRent.subtract(
+                        totalAmount
+                );
+
+        if (balanceDue.compareTo(
+                BigDecimal.ZERO) < 0) {
+
+            balanceDue =
+                    BigDecimal.ZERO;
+        }
+
+        model.addAttribute(
+                "payments",
+                payments
+        );
+
+        model.addAttribute(
+                "allocationId",
+                allocationId
+        );
+
+        model.addAttribute(
+                "totalAmount",
+                totalAmount
+        );
+
+        model.addAttribute(
+                "allocation",
+                allocation
+        );
+
+        model.addAttribute(
+                "monthlyRent",
+                monthlyRent
+        );
+
+        model.addAttribute(
+                "balanceDue",
+                balanceDue
+        );
+
+        return "payment-history";
+    }
+
+    @GetMapping("/payment/receipt")
+    public String paymentReceipt(
+            @RequestParam("id") int id,
+            Model model) {
+
+        RentPayment payment =
+                rentPaymentService
+                        .getPaymentById(id);
+
+        if (payment == null) {
+            return "redirect:/payment/list";
+        }
+
+        RoomAllocation allocation =
+                roomAllocationService
+                        .getAllocationById(
+                                payment.getAllocationId()
+                        );
+
+        BigDecimal monthlyRent =
+                BigDecimal.ZERO;
+
+        if (allocation != null
+                && allocation.getRentAmount() != null) {
+
+            monthlyRent =
+                    allocation.getRentAmount();
+        }
+
+        BigDecimal totalAmount =
+                rentPaymentService
+                        .getTotalAmountByAllocationId(
+                                payment.getAllocationId()
+                        );
+
+        BigDecimal balanceDue =
+                monthlyRent.subtract(
+                        totalAmount
+                );
+
+        if (balanceDue.compareTo(
+                BigDecimal.ZERO) < 0) {
+
+            balanceDue =
+                    BigDecimal.ZERO;
+        }
+
+        model.addAttribute(
+                "payment",
+                payment
+        );
+
+        model.addAttribute(
+                "allocation",
+                allocation
+        );
+
+        model.addAttribute(
+                "monthlyRent",
+                monthlyRent
+        );
+
+        model.addAttribute(
+                "totalAmount",
+                totalAmount
+        );
+
+        model.addAttribute(
+                "balanceDue",
+                balanceDue
+        );
+
+        return "payment-receipt";
+    }
+
+    @GetMapping("/payment/edit")
+    public String showEditPaymentForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        RentPayment payment =
+                rentPaymentService
+                        .getPaymentById(id);
+
+        List<RoomAllocation> allocations =
+                roomAllocationService
+                        .getAllAllocations();
+
+        model.addAttribute(
+                "payment",
+                payment
+        );
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        return "payment-edit";
+    }
+
+    @PostMapping("/payment/update")
+    public String updatePayment(
+            @ModelAttribute RentPayment payment,
+            Model model) {
+
+        boolean updated =
+                rentPaymentService
+                        .updatePayment(
+                                payment
+                        );
+
+        if (updated) {
+            return "redirect:/payment/list";
+        }
+
+        List<RoomAllocation> allocations =
+                roomAllocationService
+                        .getAllAllocations();
+
+        model.addAttribute(
+                "payment",
+                payment
+        );
+
+        model.addAttribute(
+                "allocations",
+                allocations
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                "Another payment already exists for this allocation and month."
+        );
+
+        return "payment-edit";
+    }
+
+    @GetMapping("/payment/delete")
+    public String deletePayment(
+            @RequestParam("id") int id) {
+
+        rentPaymentService.deletePayment(id);
+
+        return "redirect:/payment/list";
+    }
+}

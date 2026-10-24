@@ -1,0 +1,67 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Student</title>
+</head>
+<body>
+
+    <h2>Edit Student</h2>
+
+    <form action="${pageContext.request.contextPath}/student/update"
+          method="post">
+
+        <!-- Student ID hidden rahegi -->
+        <input type="hidden" name="id" value="${student.id}">
+
+        <label>Name:</label><br>
+        <input type="text"
+               name="name"
+               value="${student.name}"
+               required>
+        <br><br>
+
+        <label>Email:</label><br>
+        <input type="email"
+               name="email"
+               value="${student.email}"
+               required>
+        <br><br>
+
+        <label>Mobile:</label><br>
+        <input type="text"
+               name="mobile"
+               value="${student.mobile}"
+               required>
+        <br><br>
+
+        <label>Guardian Mobile:</label><br>
+        <input type="text"
+               name="guardianMobile"
+               value="${student.guardianMobile}">
+        <br><br>
+
+        <label>Address:</label><br>
+        <textarea name="address">${student.address}</textarea>
+        <br><br>
+
+        <label>ID Proof:</label><br>
+        <input type="text"
+               name="idProof"
+               value="${student.idProof}">
+        <br><br>
+
+        <button type="submit">Update Student</button>
+
+    </form>
+
+    <br>
+
+    <a href="${pageContext.request.contextPath}/student/list">
+        Back to Student List
+    </a>
+
+</body>
+</html>

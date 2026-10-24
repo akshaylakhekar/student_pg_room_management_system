@@ -1,0 +1,60 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Property</title>
+</head>
+<body>
+
+    <h2>Edit Property</h2>
+
+    <form action="${pageContext.request.contextPath}/property/update"
+          method="post">
+
+        <!-- Property ID hidden rahegi -->
+        <input type="hidden"
+               name="id"
+               value="${property.id}">
+
+        <label>Property Name:</label><br>
+        <input type="text"
+               name="propertyName"
+               value="${property.propertyName}"
+               required>
+        <br><br>
+
+        <label>Address:</label><br>
+        <textarea name="address"
+                  required>${property.address}</textarea>
+        <br><br>
+
+        <label>Owner Name:</label><br>
+        <input type="text"
+               name="ownerName"
+               value="${property.ownerName}"
+               required>
+        <br><br>
+
+        <label>Contact Number:</label><br>
+        <input type="text"
+               name="contactNumber"
+               value="${property.contactNumber}"
+               required>
+        <br><br>
+
+        <button type="submit">
+            Update Property
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="${pageContext.request.contextPath}/property/list">
+        Back to Property List
+    </a>
+
+</body>
+</html>

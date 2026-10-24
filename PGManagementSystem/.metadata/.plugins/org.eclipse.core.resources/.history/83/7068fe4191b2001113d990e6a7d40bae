@@ -1,0 +1,576 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Student Profile</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 18px 30px;
+        }
+
+        .navbar h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 35px auto;
+        }
+
+        .top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .top-section h2 {
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 7px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #15803d;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding-bottom: 22px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 22px;
+        }
+
+        .avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .profile-header h3 {
+            margin: 0 0 6px 0;
+            font-size: 23px;
+        }
+
+        .profile-header p {
+            margin: 0;
+            color: #64748b;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .detail {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .detail-label {
+            display: block;
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            color: #1e293b;
+            word-break: break-word;
+        }
+
+        .section-title {
+            margin: 0 0 18px 0;
+            font-size: 19px;
+        }
+
+        .rent-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .rent-card {
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .rent-card .label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .rent-card .amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .rent-card.green .amount {
+            color: #16a34a;
+        }
+
+        .rent-card.blue .amount {
+            color: #2563eb;
+        }
+
+        .rent-card.red .amount {
+            color: #dc2626;
+        }
+
+        .allocation-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .no-allocation {
+            padding: 18px;
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fed7aa;
+            border-radius: 8px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 700px) {
+
+            .container {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            .details-grid,
+            .allocation-info,
+            .rent-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+
+            .top-section {
+                align-items: stretch;
+            }
+
+            .top-section .btn {
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="navbar">
+        <h2>PG Management System</h2>
+    </div>
+
+
+    <div class="container">
+
+
+        <div class="top-section">
+
+            <h2>Student Profile</h2>
+
+            <a href="${pageContext.request.contextPath}/student/list"
+               class="btn btn-secondary">
+                Back to Students
+            </a>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <div class="profile-header">
+
+                <div class="avatar">
+                    ${student.name.substring(0,1).toUpperCase()}
+                </div>
+
+                <div>
+
+                    <h3>${student.name}</h3>
+
+                    <p>
+                        Student ID: ${student.id}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="details-grid">
+
+                <div class="detail">
+
+                    <span class="detail-label">
+                        Email
+                    </span>
+
+                    <div class="detail-value">
+                        ${student.email}
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="detail-label">
+                        Mobile
+                    </span>
+
+                    <div class="detail-value">
+                        ${student.mobile}
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="detail-label">
+                        Guardian Mobile
+                    </span>
+
+                    <div class="detail-value">
+
+                        <c:choose>
+
+                            <c:when test="${not empty student.guardianMobile}">
+                                ${student.guardianMobile}
+                            </c:when>
+
+                            <c:otherwise>
+                                -
+                            </c:otherwise>
+
+                        </c:choose>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span class="detail-label">
+                        ID Proof
+                    </span>
+
+                    <div class="detail-value">
+
+                        <c:choose>
+
+                            <c:when test="${not empty student.idProof}">
+                                ${student.idProof}
+                            </c:when>
+
+                            <c:otherwise>
+                                -
+                            </c:otherwise>
+
+                        </c:choose>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail"
+                     style="grid-column: 1 / -1;">
+
+                    <span class="detail-label">
+                        Address
+                    </span>
+
+                    <div class="detail-value">
+
+                        <c:choose>
+
+                            <c:when test="${not empty student.address}">
+                                ${student.address}
+                            </c:when>
+
+                            <c:otherwise>
+                                -
+                            </c:otherwise>
+
+                        </c:choose>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <a href="${pageContext.request.contextPath}/student/edit?id=${student.id}"
+                   class="btn btn-primary">
+                    Edit Student
+                </a>
+
+                <a href="${pageContext.request.contextPath}/complaint/student?studentId=${student.id}"
+                   class="btn btn-secondary">
+                    Complaints
+                </a>
+
+                <a href="${pageContext.request.contextPath}/visitor/student?studentId=${student.id}"
+                   class="btn btn-secondary">
+                    Visitors
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <h3 class="section-title">
+                Current Room Allocation
+            </h3>
+
+
+            <c:choose>
+
+                <c:when test="${not empty currentAllocation}">
+
+                    <div class="allocation-info">
+
+                        <div class="detail">
+
+                            <span class="detail-label">
+                                Room Number
+                            </span>
+
+                            <div class="detail-value">
+                                ${currentAllocation.roomNumber}
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span class="detail-label">
+                                Property
+                            </span>
+
+                            <div class="detail-value">
+                                ${currentAllocation.propertyName}
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span class="detail-label">
+                                Sharing Type
+                            </span>
+
+                            <div class="detail-value">
+                                ${currentAllocation.sharingType}
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span class="detail-label">
+                                Allocation Date
+                            </span>
+
+                            <div class="detail-value">
+                                ${currentAllocation.allocationDate}
+                            </div>
+
+                        </div>
+
+
+                        <div class="detail">
+
+                            <span class="detail-label">
+                                Status
+                            </span>
+
+                            <div class="detail-value">
+                                ${currentAllocation.status}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </c:when>
+
+
+                <c:otherwise>
+
+                    <div class="no-allocation">
+                        This student currently has no active room allocation.
+                    </div>
+
+                </c:otherwise>
+
+            </c:choose>
+
+        </div>
+
+
+        <div class="profile-card">
+
+            <h3 class="section-title">
+                Rent Summary
+            </h3>
+
+
+            <div class="rent-grid">
+
+                <div class="rent-card blue">
+
+                    <div class="label">
+                        Monthly Rent
+                    </div>
+
+                    <div class="amount">
+                        ₹ ${monthlyRent}
+                    </div>
+
+                </div>
+
+
+                <div class="rent-card green">
+
+                    <div class="label">
+                        Total Paid
+                    </div>
+
+                    <div class="amount">
+                        ₹ ${totalPaid}
+                    </div>
+
+                </div>
+
+
+                <div class="rent-card red">
+
+                    <div class="label">
+                        Balance Due
+                    </div>
+
+                    <div class="amount">
+                        ₹ ${balanceDue}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>

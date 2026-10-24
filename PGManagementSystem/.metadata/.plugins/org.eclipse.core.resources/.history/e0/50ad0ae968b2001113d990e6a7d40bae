@@ -1,0 +1,49 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.RoomAllocationDAO;
+import com.pgmanagement.model.RoomAllocation;
+
+@Service
+public class RoomAllocationService {
+
+    private final RoomAllocationDAO roomAllocationDAO;
+
+    public RoomAllocationService(
+            RoomAllocationDAO roomAllocationDAO) {
+
+        this.roomAllocationDAO = roomAllocationDAO;
+    }
+
+    public boolean addAllocation(
+            RoomAllocation allocation) {
+
+        return roomAllocationDAO.addAllocation(allocation);
+    }
+
+    public List<RoomAllocation> getAllAllocations() {
+
+        return roomAllocationDAO.getAllAllocations();
+    }
+
+    public RoomAllocation getAllocationById(int id) {
+
+        return roomAllocationDAO.getAllocationById(id);
+    }
+
+    public boolean updateAllocation(
+            RoomAllocation allocation) {
+
+        return roomAllocationDAO.updateAllocation(
+                allocation
+        );
+    }
+
+    public boolean deleteAllocation(int id) {
+
+        return roomAllocationDAO.deleteAllocation(id);
+    }
+}

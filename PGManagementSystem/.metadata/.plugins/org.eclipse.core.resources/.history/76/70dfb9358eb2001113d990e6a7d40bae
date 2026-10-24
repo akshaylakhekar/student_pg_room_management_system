@@ -1,0 +1,636 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>PG Management System</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            background: #334155;
+        }
+
+        .nav-dashboard {
+            background: #2563eb;
+        }
+
+        .hero {
+            min-height: 470px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(
+                135deg,
+                #eff6ff,
+                #f8fafc
+            );
+        }
+
+        .hero-content {
+            max-width: 850px;
+        }
+
+        .hero h1 {
+            font-size: 46px;
+            margin: 0 0 18px;
+            color: #1e293b;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero p {
+            font-size: 18px;
+            line-height: 1.7;
+            color: #64748b;
+            margin: 0 auto 30px;
+            max-width: 700px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 13px 24px;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2563eb;
+            border: 1px solid #2563eb;
+        }
+
+        .btn-secondary:hover {
+            background: #eff6ff;
+        }
+
+        .section {
+            width: 90%;
+            max-width: 1200px;
+            margin: 55px auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title h2 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .section-title p {
+            margin: 0;
+            color: #64748b;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 28px 22px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            transition: 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
+        }
+
+        .feature-icon {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            color: #2563eb;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .feature-card h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modules {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .module {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: 0.2s;
+        }
+
+        .module:hover {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .module h3 {
+            margin: 0 0 7px;
+            font-size: 16px;
+        }
+
+        .module p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .cta {
+            background: #1e293b;
+            color: white;
+            text-align: center;
+            padding: 55px 20px;
+            margin-top: 60px;
+        }
+
+        .cta h2 {
+            margin: 0 0 12px;
+            font-size: 30px;
+        }
+
+        .cta p {
+            margin: 0 0 25px;
+            color: #cbd5e1;
+        }
+
+        .cta .btn-primary {
+            background: #2563eb;
+        }
+
+        .footer {
+            background: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 22px 10px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1000px) {
+
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modules {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .navbar {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                min-height: 420px;
+                padding: 45px 18px;
+            }
+
+            .hero h1 {
+                font-size: 31px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .modules {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                width: 92%;
+                margin: 40px auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <div class="navbar">
+
+        <div class="logo">
+            PG Management System
+        </div>
+
+        <div class="nav-links">
+
+            <a href="${pageContext.request.contextPath}/">
+                Home
+            </a>
+
+            <a href="${pageContext.request.contextPath}/dashboard"
+               class="nav-dashboard">
+                Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Welcome to
+                <span>PG Management System</span>
+            </h1>
+
+            <p>
+                A simple and efficient system to manage PG students,
+                properties, rooms, allocations, rent payments,
+                complaints and visitors from one place.
+            </p>
+
+            <div class="buttons">
+
+                <a href="${pageContext.request.contextPath}/dashboard"
+                   class="btn btn-primary">
+                    Go to Dashboard
+                </a>
+
+                <a href="${pageContext.request.contextPath}/student/add"
+                   class="btn btn-secondary">
+                    Add Student
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="section">
+
+        <div class="section-title">
+
+            <h2>
+                System Features
+            </h2>
+
+            <p>
+                Everything you need to manage your PG operations.
+            </p>
+
+        </div>
+
+
+        <div class="features">
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    S
+                </div>
+
+                <h3>
+                    Student Management
+                </h3>
+
+                <p>
+                    Add, update, search and manage complete student information.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    R
+                </div>
+
+                <h3>
+                    Room Management
+                </h3>
+
+                <p>
+                    Manage rooms, capacity, sharing type, rent and availability.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    P
+                </div>
+
+                <h3>
+                    Rent Payments
+                </h3>
+
+                <p>
+                    Track rent payments, pending payments and payment history.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    C
+                </div>
+
+                <h3>
+                    Complaints
+                </h3>
+
+                <p>
+                    Manage student complaints and keep track of their status.
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <section class="section">
+
+        <div class="section-title">
+
+            <h2>
+                Quick Access
+            </h2>
+
+            <p>
+                Open any management module directly.
+            </p>
+
+        </div>
+
+
+        <div class="modules">
+
+
+            <a href="${pageContext.request.contextPath}/student/list"
+               class="module">
+
+                <h3>
+                    Students
+                </h3>
+
+                <p>
+                    View and manage all students.
+                </p>
+
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/property/list"
+               class="module">
+
+                <h3>
+                    Properties
+                </h3>
+
+                <p>
+                    Manage PG properties and owners.
+                </p>
+
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/room/list"
+               class="module">
+
+                <h3>
+                    Rooms
+                </h3>
+
+                <p>
+                    Manage rooms and rent details.
+                </p>
+
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/allocation/list"
+               class="module">
+
+                <h3>
+                    Allocations
+                </h3>
+
+                <p>
+                    Manage student room allocations.
+                </p>
+
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/payment/list"
+               class="module">
+
+                <h3>
+                    Rent Payments
+                </h3>
+
+                <p>
+                    Manage rent payment records.
+                </p>
+
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/complaint/list"
+               class="module">
+
+                <h3>
+                    Complaints
+                </h3>
+
+                <p>
+                    View and manage complaints.
+                </p>
+
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/visitor/list"
+               class="module">
+
+                <h3>
+                    Visitors
+                </h3>
+
+                <p>
+                    Manage visitor entry and exit records.
+                </p>
+
+            </a>
+
+
+            <a href="${pageContext.request.contextPath}/student/add"
+               class="module">
+
+                <h3>
+                    Add Student
+                </h3>
+
+                <p>
+                    Register a new student quickly.
+                </p>
+
+            </a>
+
+
+        </div>
+
+    </section>
+
+
+    <section class="cta">
+
+        <h2>
+            Ready to Manage Your PG?
+        </h2>
+
+        <p>
+            Start managing your students, rooms and daily PG activities.
+        </p>
+
+        <a href="${pageContext.request.contextPath}/dashboard"
+           class="btn btn-primary">
+            Open Dashboard
+        </a>
+
+    </section>
+
+
+    <div class="footer">
+
+        PG Management System &copy; 2026
+
+    </div>
+
+
+</body>
+
+</html>

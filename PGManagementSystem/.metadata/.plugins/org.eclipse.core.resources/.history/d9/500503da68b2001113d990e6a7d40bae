@@ -1,0 +1,44 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.RoomDAO;
+import com.pgmanagement.model.Room;
+
+@Service
+public class RoomService {
+
+    private final RoomDAO roomDAO;
+
+    // RoomDAO Spring automatically inject karega
+    public RoomService(RoomDAO roomDAO) {
+        this.roomDAO = roomDAO;
+    }
+
+    // Room save karne ke liye
+    public boolean addRoom(Room room) {
+        return roomDAO.addRoom(room);
+    }
+
+    // Saare rooms fetch karne ke liye
+    public List<Room> getAllRooms() {
+        return roomDAO.getAllRooms();
+    }
+
+    // ID ke basis par room fetch karne ke liye
+    public Room getRoomById(int id) {
+        return roomDAO.getRoomById(id);
+    }
+
+    // Room update karne ke liye
+    public boolean updateRoom(Room room) {
+        return roomDAO.updateRoom(room);
+    }
+
+    // Room delete karne ke liye
+    public boolean deleteRoom(int id) {
+        return roomDAO.deleteRoom(id);
+    }
+}

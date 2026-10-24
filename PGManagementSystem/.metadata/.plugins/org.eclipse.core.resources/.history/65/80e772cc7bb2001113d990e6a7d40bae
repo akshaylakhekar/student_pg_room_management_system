@@ -1,0 +1,290 @@
+package com.pgmanagement.dao;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.pgmanagement.model.Visitor;
+
+@Repository
+public class VisitorDAO {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public VisitorDAO(
+            JdbcTemplate jdbcTemplate) {
+
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public boolean addVisitor(
+            Visitor visitor) {
+
+        String sql =
+                "INSERT INTO visitors "
+              + "(student_id, visitor_name, relation, "
+              + "entry_time, exit_time) "
+              + "VALUES (?, ?, ?, ?, ?)";
+
+        Timestamp entryTimestamp = null;
+        Timestamp exitTimestamp = null;
+
+        if (visitor.getEntryTime() != null) {
+
+            entryTimestamp =
+                    Timestamp.valueOf(
+                            visitor.getEntryTime()
+                    );
+        }
+
+        if (visitor.getExitTime() != null) {
+
+            exitTimestamp =
+                    Timestamp.valueOf(
+                            visitor.getExitTime()
+                    );
+        }
+
+        int rows = jdbcTemplate.update(
+                sql,
+                visitor.getStudentId(),
+                visitor.getVisitorName(),
+                visitor.getRelation(),
+                entryTimestamp,
+                exitTimestamp
+        );
+
+        return rows > 0;
+    }
+
+    public List<Visitor> getAllVisitors() {
+
+        String sql =
+                "SELECT * FROM visitors "
+              + "ORDER BY id DESC";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    Visitor visitor =
+                            new Visitor();
+
+                    visitor.setId(
+                            rs.getInt("id")
+                    );
+
+                    visitor.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    visitor.setVisitorName(
+                            rs.getString("visitor_name")
+                    );
+
+                    visitor.setRelation(
+                            rs.getString("relation")
+                    );
+
+                    if (rs.getTimestamp(
+                            "entry_time") != null) {
+
+                        visitor.setEntryTime(
+                                rs.getTimestamp(
+                                        "entry_time"
+                                ).toLocalDateTime()
+                        );
+                    }
+
+                    if (rs.getTimestamp(
+                            "exit_time") != null) {
+
+                        visitor.setExitTime(
+                                rs.getTimestamp(
+                                        "exit_time"
+                                ).toLocalDateTime()
+                        );
+                    }
+
+                    return visitor;
+                }
+        );
+    }
+
+    public List<Visitor> searchVisitors(
+            String keyword) {
+
+        String sql =
+                "SELECT * FROM visitors "
+              + "WHERE CAST(student_id AS CHAR) LIKE ? "
+              + "OR visitor_name LIKE ? "
+              + "OR relation LIKE ? "
+              + "ORDER BY id DESC";
+
+        String searchKeyword =
+                "%" + keyword + "%";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    Visitor visitor =
+                            new Visitor();
+
+                    visitor.setId(
+                            rs.getInt("id")
+                    );
+
+                    visitor.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    visitor.setVisitorName(
+                            rs.getString("visitor_name")
+                    );
+
+                    visitor.setRelation(
+                            rs.getString("relation")
+                    );
+
+                    if (rs.getTimestamp(
+                            "entry_time") != null) {
+
+                        visitor.setEntryTime(
+                                rs.getTimestamp(
+                                        "entry_time"
+                                ).toLocalDateTime()
+                        );
+                    }
+
+                    if (rs.getTimestamp(
+                            "exit_time") != null) {
+
+                        visitor.setExitTime(
+                                rs.getTimestamp(
+                                        "exit_time"
+                                ).toLocalDateTime()
+                        );
+                    }
+
+                    return visitor;
+                },
+                searchKeyword,
+                searchKeyword,
+                searchKeyword
+        );
+    }
+
+    public Visitor getVisitorById(int id) {
+
+        String sql =
+                "SELECT * FROM visitors "
+              + "WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(
+                sql,
+                (rs, rowNum) -> {
+
+                    Visitor visitor =
+                            new Visitor();
+
+                    visitor.setId(
+                            rs.getInt("id")
+                    );
+
+                    visitor.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    visitor.setVisitorName(
+                            rs.getString("visitor_name")
+                    );
+
+                    visitor.setRelation(
+                            rs.getString("relation")
+                    );
+
+                    if (rs.getTimestamp(
+                            "entry_time") != null) {
+
+                        visitor.setEntryTime(
+                                rs.getTimestamp(
+                                        "entry_time"
+                                ).toLocalDateTime()
+                        );
+                    }
+
+                    if (rs.getTimestamp(
+                            "exit_time") != null) {
+
+                        visitor.setExitTime(
+                                rs.getTimestamp(
+                                        "exit_time"
+                                ).toLocalDateTime()
+                        );
+                    }
+
+                    return visitor;
+                },
+                id
+        );
+    }
+
+    public boolean updateVisitor(
+            Visitor visitor) {
+
+        String sql =
+                "UPDATE visitors SET "
+              + "student_id = ?, "
+              + "visitor_name = ?, "
+              + "relation = ?, "
+              + "entry_time = ?, "
+              + "exit_time = ? "
+              + "WHERE id = ?";
+
+        Timestamp entryTimestamp = null;
+        Timestamp exitTimestamp = null;
+
+        if (visitor.getEntryTime() != null) {
+
+            entryTimestamp =
+                    Timestamp.valueOf(
+                            visitor.getEntryTime()
+                    );
+        }
+
+        if (visitor.getExitTime() != null) {
+
+            exitTimestamp =
+                    Timestamp.valueOf(
+                            visitor.getExitTime()
+                    );
+        }
+
+        int rows = jdbcTemplate.update(
+                sql,
+                visitor.getStudentId(),
+                visitor.getVisitorName(),
+                visitor.getRelation(),
+                entryTimestamp,
+                exitTimestamp,
+                visitor.getId()
+        );
+
+        return rows > 0;
+    }
+
+    public boolean deleteVisitor(int id) {
+
+        String sql =
+                "DELETE FROM visitors "
+              + "WHERE id = ?";
+
+        int rows =
+                jdbcTemplate.update(sql, id);
+
+        return rows > 0;
+    }
+}

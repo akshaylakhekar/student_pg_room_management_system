@@ -1,0 +1,49 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.ComplaintDAO;
+import com.pgmanagement.model.Complaint;
+
+@Service
+public class ComplaintService {
+
+    private final ComplaintDAO complaintDAO;
+
+    public ComplaintService(
+            ComplaintDAO complaintDAO) {
+
+        this.complaintDAO = complaintDAO;
+    }
+
+    public boolean addComplaint(
+            Complaint complaint) {
+
+        return complaintDAO.addComplaint(complaint);
+    }
+
+    public List<Complaint> getAllComplaints() {
+
+        return complaintDAO.getAllComplaints();
+    }
+
+    public Complaint getComplaintById(int id) {
+
+        return complaintDAO.getComplaintById(id);
+    }
+
+    public boolean updateComplaint(
+            Complaint complaint) {
+
+        return complaintDAO.updateComplaint(
+                complaint
+        );
+    }
+
+    public boolean deleteComplaint(int id) {
+
+        return complaintDAO.deleteComplaint(id);
+    }
+}

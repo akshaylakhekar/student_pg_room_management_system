@@ -1,0 +1,191 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <title>PG Management Dashboard</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .card {
+            width: 220px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .card h2 {
+            margin-bottom: 10px;
+        }
+
+        .count {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .links {
+            margin-top: 30px;
+        }
+
+        .links a {
+            margin-right: 15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <h1>PG Management Dashboard</h1>
+
+
+    <div class="dashboard">
+
+        <!-- Students -->
+
+        <div class="card">
+
+            <h2>Students</h2>
+
+            <div class="count">
+                ${studentCount}
+            </div>
+
+        </div>
+
+
+        <!-- Properties -->
+
+        <div class="card">
+
+            <h2>Properties</h2>
+
+            <div class="count">
+                ${propertyCount}
+            </div>
+
+        </div>
+
+
+        <!-- Rooms -->
+
+        <div class="card">
+
+            <h2>Rooms</h2>
+
+            <div class="count">
+                ${roomCount}
+            </div>
+
+        </div>
+
+
+        <!-- Active Allocations -->
+
+        <div class="card">
+
+            <h2>Active Allocations</h2>
+
+            <div class="count">
+                ${activeAllocationCount}
+            </div>
+
+        </div>
+
+
+        <!-- Pending Rent -->
+
+        <div class="card">
+
+            <h2>Pending Rent</h2>
+
+            <div class="count">
+                ${pendingRentCount}
+            </div>
+
+        </div>
+
+
+        <!-- Complaints -->
+
+        <div class="card">
+
+            <h2>Complaints</h2>
+
+            <div class="count">
+                ${complaintCount}
+            </div>
+
+        </div>
+
+
+        <!-- Visitors -->
+
+        <div class="card">
+
+            <h2>Visitors</h2>
+
+            <div class="count">
+                ${visitorCount}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="links">
+
+        <h3>Quick Links</h3>
+
+        <a href="${pageContext.request.contextPath}/student/add">
+            Add Student
+        </a>
+
+        <a href="${pageContext.request.contextPath}/property/add">
+            Add Property
+        </a>
+
+        <a href="${pageContext.request.contextPath}/room/add">
+            Add Room
+        </a>
+
+        <a href="${pageContext.request.contextPath}/allocation/add">
+            Allocate Room
+        </a>
+
+        <a href="${pageContext.request.contextPath}/payment/add">
+            Add Payment
+        </a>
+
+        <a href="${pageContext.request.contextPath}/complaint/add">
+            Add Complaint
+        </a>
+
+        <a href="${pageContext.request.contextPath}/visitor/add">
+            Add Visitor
+        </a>
+
+    </div>
+
+</body>
+</html>

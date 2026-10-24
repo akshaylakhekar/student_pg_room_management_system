@@ -1,0 +1,175 @@
+package com.pgmanagement.controller;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Student;
+import com.pgmanagement.model.Visitor;
+import com.pgmanagement.service.StudentService;
+import com.pgmanagement.service.VisitorService;
+
+@Controller
+public class VisitorController {
+
+    private final VisitorService visitorService;
+    private final StudentService studentService;
+
+    public VisitorController(
+            VisitorService visitorService,
+            StudentService studentService) {
+
+        this.visitorService = visitorService;
+        this.studentService = studentService;
+    }
+
+    @GetMapping("/visitor/add")
+    public String showAddVisitorForm(
+            @RequestParam(
+                    value = "studentId",
+                    required = false
+            )
+            Integer studentId,
+            Model model) {
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        Visitor visitor =
+                new Visitor();
+
+        if (studentId != null) {
+
+            visitor.setStudentId(
+                    studentId
+            );
+        }
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "visitor",
+                visitor
+        );
+
+        return "visitor-add";
+    }
+
+    @PostMapping("/visitor/save")
+    public String saveVisitor(
+            @ModelAttribute Visitor visitor) {
+
+        if (visitor.getEntryTime() == null) {
+
+            visitor.setEntryTime(
+                    LocalDateTime.now()
+            );
+        }
+
+        boolean saved =
+                visitorService.addVisitor(
+                        visitor
+                );
+
+        if (saved) {
+
+            return "redirect:/visitor/list";
+        }
+
+        return "visitor-add";
+    }
+
+    @GetMapping("/visitor/list")
+    public String listVisitors(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            Model model) {
+
+        List<Visitor> visitors;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            visitors =
+                    visitorService
+                            .getAllVisitors();
+
+        } else {
+
+            visitors =
+                    visitorService
+                            .searchVisitors(
+                                    keyword.trim()
+                            );
+        }
+
+        model.addAttribute(
+                "visitors",
+                visitors
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        return "visitor-list";
+    }
+
+    @GetMapping("/visitor/edit")
+    public String showEditVisitorForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Visitor visitor =
+                visitorService
+                        .getVisitorById(id);
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        model.addAttribute(
+                "visitor",
+                visitor
+        );
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        return "visitor-edit";
+    }
+
+    @PostMapping("/visitor/update")
+    public String updateVisitor(
+            @ModelAttribute Visitor visitor) {
+
+        visitorService.updateVisitor(
+                visitor
+        );
+
+        return "redirect:/visitor/list";
+    }
+
+    @GetMapping("/visitor/delete")
+    public String deleteVisitor(
+            @RequestParam("id") int id) {
+
+        visitorService.deleteVisitor(id);
+
+        return "redirect:/visitor/list";
+    }
+}

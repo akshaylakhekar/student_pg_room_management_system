@@ -1,0 +1,63 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.VisitorDAO;
+import com.pgmanagement.model.Visitor;
+
+@Service
+public class VisitorService {
+
+    private final VisitorDAO visitorDAO;
+
+    public VisitorService(
+            VisitorDAO visitorDAO) {
+
+        this.visitorDAO = visitorDAO;
+    }
+
+    public boolean addVisitor(
+            Visitor visitor) {
+
+        return visitorDAO.addVisitor(
+                visitor
+        );
+    }
+
+    public List<Visitor>
+            getAllVisitors() {
+
+        return visitorDAO
+                .getAllVisitors();
+    }
+
+    public List<Visitor>
+            searchVisitors(
+                    String keyword) {
+
+        return visitorDAO
+                .searchVisitors(keyword);
+    }
+
+    public Visitor getVisitorById(
+            int id) {
+
+        return visitorDAO
+                .getVisitorById(id);
+    }
+
+    public boolean updateVisitor(
+            Visitor visitor) {
+
+        return visitorDAO
+                .updateVisitor(visitor);
+    }
+
+    public boolean deleteVisitor(int id) {
+
+        return visitorDAO
+                .deleteVisitor(id);
+    }
+}

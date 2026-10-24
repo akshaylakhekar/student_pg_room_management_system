@@ -1,0 +1,234 @@
+package com.pgmanagement.controller;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Student;
+import com.pgmanagement.model.Visitor;
+import com.pgmanagement.service.StudentService;
+import com.pgmanagement.service.VisitorService;
+
+@Controller
+public class VisitorController {
+
+    private final VisitorService visitorService;
+    private final StudentService studentService;
+
+    public VisitorController(
+            VisitorService visitorService,
+            StudentService studentService) {
+
+        this.visitorService =
+                visitorService;
+
+        this.studentService =
+                studentService;
+    }
+
+    @GetMapping("/visitor/add")
+    public String showAddVisitorForm(
+            @RequestParam(
+                    value = "studentId",
+                    required = false
+            )
+            Integer studentId,
+            Model model) {
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        Visitor visitor =
+                new Visitor();
+
+        if (studentId != null) {
+
+            visitor.setStudentId(
+                    studentId
+            );
+        }
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "visitor",
+                visitor
+        );
+
+        return "visitor-add";
+    }
+
+    @PostMapping("/visitor/save")
+    public String saveVisitor(
+            @ModelAttribute Visitor visitor) {
+
+        if (visitor.getEntryTime() == null) {
+
+            visitor.setEntryTime(
+                    LocalDateTime.now()
+            );
+        }
+
+        boolean saved =
+                visitorService.addVisitor(
+                        visitor
+                );
+
+        if (saved) {
+
+            return "redirect:/visitor/list";
+        }
+
+        return "visitor-add";
+    }
+
+    @GetMapping("/visitor/list")
+    public String listVisitors(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            @RequestParam(
+                    value = "errorMessage",
+                    required = false
+            )
+            String errorMessage,
+            Model model) {
+
+        List<Visitor> visitors;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            visitors =
+                    visitorService
+                            .getAllVisitors();
+
+        } else {
+
+            visitors =
+                    visitorService
+                            .searchVisitors(
+                                    keyword.trim()
+                            );
+        }
+
+        model.addAttribute(
+                "visitors",
+                visitors
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                errorMessage
+        );
+
+        return "visitor-list";
+    }
+
+    @GetMapping("/visitor/student")
+    public String listStudentVisitors(
+            @RequestParam("studentId")
+            int studentId,
+            Model model) {
+
+        List<Visitor> visitors =
+                visitorService
+                        .getVisitorsByStudentId(
+                                studentId
+                        );
+
+        Student student =
+                studentService.getStudentById(
+                        studentId
+                );
+
+        model.addAttribute(
+                "visitors",
+                visitors
+        );
+
+        model.addAttribute(
+                "student",
+                student
+        );
+
+        return "visitor-student-list";
+    }
+
+    @GetMapping("/visitor/edit")
+    public String showEditVisitorForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Visitor visitor =
+                visitorService
+                        .getVisitorById(id);
+
+        List<Student> students =
+                studentService.getAllStudents();
+
+        model.addAttribute(
+                "visitor",
+                visitor
+        );
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        return "visitor-edit";
+    }
+
+    @PostMapping("/visitor/update")
+    public String updateVisitor(
+            @ModelAttribute Visitor visitor) {
+
+        boolean updated =
+                visitorService.updateVisitor(
+                        visitor
+                );
+
+        if (updated) {
+
+            return "redirect:/visitor/list";
+        }
+
+        return "redirect:/visitor/list"
+                + "?errorMessage="
+                + "Visitor record could not be updated.";
+    }
+
+    @GetMapping("/visitor/delete")
+    public String deleteVisitor(
+            @RequestParam("id") int id) {
+
+        boolean deleted =
+                visitorService.deleteVisitor(id);
+
+        if (deleted) {
+
+            return "redirect:/visitor/list";
+        }
+
+        return "redirect:/visitor/list"
+                + "?errorMessage="
+                + "Visitor record could not be deleted because the record was not found.";
+    }
+}

@@ -1,0 +1,125 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Property</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f4f7fb;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 18px 40px;
+        }
+
+        .container {
+            max-width: 750px;
+            width: 92%;
+            margin: 35px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin: 15px 0 7px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 11px;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        textarea { min-height: 100px; }
+
+        button {
+            margin-top: 20px;
+            padding: 11px 20px;
+            border: none;
+            background: #2563eb;
+            color: white;
+            border-radius: 6px;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>PG Management System</h2>
+</div>
+
+<div class="container">
+
+<div class="card">
+
+<h1>Edit Property</h1>
+
+<form action="${pageContext.request.contextPath}/property/update"
+      method="post">
+
+    <input type="hidden"
+           name="id"
+           value="${property.id}">
+
+    <label>Property Name</label>
+    <input type="text"
+           name="propertyName"
+           value="${property.propertyName}"
+           required>
+
+    <label>Address</label>
+    <textarea name="address"
+              required>${property.address}</textarea>
+
+    <label>Owner Name</label>
+    <input type="text"
+           name="ownerName"
+           value="${property.ownerName}"
+           required>
+
+    <label>Contact Number</label>
+    <input type="text"
+           name="contactNumber"
+           value="${property.contactNumber}"
+           required>
+
+    <button type="submit">
+        Update Property
+    </button>
+
+</form>
+
+<br>
+
+<a href="${pageContext.request.contextPath}/property/list">
+    ← Back to Property List
+</a>
+
+</div>
+
+</div>
+
+</body>
+</html>

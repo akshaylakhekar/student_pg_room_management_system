@@ -1,0 +1,404 @@
+package com.pgmanagement.controller;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.RoomAllocation;
+import com.pgmanagement.model.Student;
+import com.pgmanagement.service.RentPaymentService;
+import com.pgmanagement.service.RoomAllocationService;
+import com.pgmanagement.service.StudentService;
+
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+public class StudentController {
+
+    private final StudentService studentService;
+    private final RoomAllocationService roomAllocationService;
+    private final RentPaymentService rentPaymentService;
+
+    public StudentController(
+            StudentService studentService,
+            RoomAllocationService roomAllocationService,
+            RentPaymentService rentPaymentService) {
+
+        this.studentService = studentService;
+
+        this.roomAllocationService =
+                roomAllocationService;
+
+        this.rentPaymentService =
+                rentPaymentService;
+    }
+
+    @GetMapping("/student/login")
+    public String showLoginPage() {
+
+        return "student-login";
+    }
+
+    @PostMapping("/student/login")
+    public String login(
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            HttpSession session,
+            Model model) {
+
+        Student student =
+                studentService.login(
+                        email,
+                        password
+                );
+
+        if (student != null) {
+
+            session.setAttribute(
+                    "student",
+                    student
+            );
+
+            session.setAttribute(
+                    "role",
+                    "STUDENT"
+            );
+
+            return "redirect:/student/dashboard";
+        }
+
+        model.addAttribute(
+                "errorMessage",
+                "Invalid email or password."
+        );
+
+        return "student-login";
+    }
+
+    @GetMapping("/student/logout")
+    public String logout(
+            HttpSession session) {
+
+        session.invalidate();
+
+        return "redirect:/student/login";
+    }
+
+    @GetMapping("/student/add")
+    public String showAddStudentForm(
+            Model model) {
+
+        model.addAttribute(
+                "student",
+                new Student()
+        );
+
+        return "student-add";
+    }
+
+    @PostMapping("/student/save")
+    public String saveStudent(
+            @ModelAttribute Student student) {
+
+        boolean saved =
+                studentService.addStudent(
+                        student
+                );
+
+        if (saved) {
+
+            return "redirect:/student/login";
+        }
+
+        return "student-add";
+    }
+
+    @GetMapping("/student/list")
+    public String listStudents(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+
+            @RequestParam(
+                    value = "errorMessage",
+                    required = false
+            )
+            String errorMessage,
+
+            HttpSession session,
+            Model model) {
+
+        String role =
+                (String) session.getAttribute("role");
+
+        if (!"ADMIN".equals(role)) {
+
+            return "redirect:/student/login";
+        }
+
+        List<Student> students;
+
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            students =
+                    studentService.getAllStudents();
+
+        } else {
+
+            students =
+                    studentService.searchStudents(
+                            keyword.trim()
+                    );
+        }
+
+        model.addAttribute(
+                "students",
+                students
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        model.addAttribute(
+                "errorMessage",
+                errorMessage
+        );
+
+        return "student-list";
+    }
+
+    @GetMapping("/student/profile")
+    public String showStudentProfile(
+            @RequestParam(
+                    value = "id",
+                    required = false
+            )
+            Integer id,
+
+            HttpSession session,
+            Model model) {
+
+        Student loggedInStudent =
+                (Student) session.getAttribute(
+                        "student"
+                );
+
+        String role =
+                (String) session.getAttribute("role");
+
+        if (loggedInStudent == null
+                && !"ADMIN".equals(role)) {
+
+            return "redirect:/student/login";
+        }
+
+        if ("STUDENT".equals(role)) {
+
+            if (loggedInStudent == null) {
+
+                return "redirect:/student/login";
+            }
+
+            id =
+                    loggedInStudent.getId();
+        }
+
+        if ("ADMIN".equals(role)
+                && id == null) {
+
+            return "redirect:/student/list";
+        }
+
+        if (!"ADMIN".equals(role)
+                && !"STUDENT".equals(role)) {
+
+            return "redirect:/student/login";
+        }
+
+        Student student =
+                studentService.getStudentById(id);
+
+        if (student == null) {
+
+            if ("ADMIN".equals(role)) {
+
+                return "redirect:/student/list";
+            }
+
+            return "redirect:/student/dashboard";
+        }
+
+        List<RoomAllocation> allocations =
+                roomAllocationService
+                        .getAllAllocations();
+
+        RoomAllocation currentAllocation =
+                null;
+
+        if (allocations != null) {
+
+            for (RoomAllocation allocation
+                    : allocations) {
+
+                if (allocation.getStudentId() == id
+                        && "Active".equalsIgnoreCase(
+                                allocation.getStatus())) {
+
+                    currentAllocation =
+                            allocation;
+
+                    break;
+                }
+            }
+        }
+
+        BigDecimal monthlyRent =
+                BigDecimal.ZERO;
+
+        BigDecimal totalPaid =
+                BigDecimal.ZERO;
+
+        BigDecimal balanceDue =
+                BigDecimal.ZERO;
+
+        if (currentAllocation != null) {
+
+            if (currentAllocation.getRentAmount()
+                    != null) {
+
+                monthlyRent =
+                        currentAllocation.getRentAmount();
+            }
+
+            totalPaid =
+                    rentPaymentService
+                            .getTotalAmountByAllocationId(
+                                    currentAllocation.getId()
+                            );
+
+            balanceDue =
+                    monthlyRent.subtract(
+                            totalPaid
+                    );
+
+            if (balanceDue.compareTo(
+                    BigDecimal.ZERO) < 0) {
+
+                balanceDue =
+                        BigDecimal.ZERO;
+            }
+        }
+
+        model.addAttribute(
+                "student",
+                student
+        );
+
+        model.addAttribute(
+                "currentAllocation",
+                currentAllocation
+        );
+
+        model.addAttribute(
+                "monthlyRent",
+                monthlyRent
+        );
+
+        model.addAttribute(
+                "totalPaid",
+                totalPaid
+        );
+
+        model.addAttribute(
+                "balanceDue",
+                balanceDue
+        );
+
+        return "student-profile";
+    }
+
+    @GetMapping("/student/edit")
+    public String showEditStudentForm(
+            @RequestParam("id") int id,
+            HttpSession session,
+            Model model) {
+
+        String role =
+                (String) session.getAttribute("role");
+
+        if (!"ADMIN".equals(role)) {
+
+            return "redirect:/student/login";
+        }
+
+        Student student =
+                studentService.getStudentById(id);
+
+        if (student == null) {
+
+            return "redirect:/student/list";
+        }
+
+        model.addAttribute(
+                "student",
+                student
+        );
+
+        return "student-edit";
+    }
+
+    @PostMapping("/student/update")
+    public String updateStudent(
+            @ModelAttribute Student student,
+            HttpSession session) {
+
+        String role =
+                (String) session.getAttribute("role");
+
+        if (!"ADMIN".equals(role)) {
+
+            return "redirect:/student/login";
+        }
+
+        studentService.updateStudent(student);
+
+        return "redirect:/student/list";
+    }
+
+    @GetMapping("/student/delete")
+    public String deleteStudent(
+            @RequestParam("id") int id,
+            HttpSession session) {
+
+        String role =
+                (String) session.getAttribute("role");
+
+        if (!"ADMIN".equals(role)) {
+
+            return "redirect:/student/login";
+        }
+
+        boolean deleted =
+                studentService.deleteStudent(id);
+
+        if (deleted) {
+
+            return "redirect:/student/list";
+        }
+
+        return "redirect:/student/list"
+                + "?errorMessage="
+                + "Cannot delete student because related allocation, complaint or visitor records exist.";
+    }
+}

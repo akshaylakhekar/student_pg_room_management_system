@@ -1,0 +1,32 @@
+package com.pgmanagement.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+import com.pgmanagement.model.Student;
+import com.pgmanagement.service.StudentService;
+
+@Controller
+public class StudentController {
+
+    private StudentService studentService = new StudentService();
+
+    @GetMapping("/student/add")
+    public String showAddStudentForm() {
+        return "student-add";
+    }
+
+    @PostMapping("/student/save")
+    public String saveStudent(@ModelAttribute Student student) {
+
+        boolean saved = studentService.addStudent(student);
+
+        if (saved) {
+            return "redirect:/student/add";
+        }
+
+        return "student-add";
+    }
+}

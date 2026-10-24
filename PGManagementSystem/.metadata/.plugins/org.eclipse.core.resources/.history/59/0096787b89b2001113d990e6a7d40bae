@@ -1,0 +1,228 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Rooms</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f4f7fb;
+        }
+
+        .navbar {
+            background: #1e293b;
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .container {
+            width: 94%;
+            max-width: 1300px;
+            margin: 35px auto;
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .button {
+            background: #2563eb;
+            color: white;
+            padding: 11px 16px;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .search, .table-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 320px;
+        }
+
+        button {
+            padding: 10px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1000px;
+        }
+
+        th {
+            background: #1e293b;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 11px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        td a {
+            color: #2563eb;
+            margin-right: 10px;
+        }
+
+        .table-box {
+            overflow-x: auto;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>PG Management System</h2>
+
+    <div>
+        <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
+        <a href="${pageContext.request.contextPath}/">Home</a>
+    </div>
+</div>
+
+<div class="container">
+
+<div class="top">
+
+<div>
+    <h1>Room Management</h1>
+    <p>Total Rooms: <strong>${rooms.size()}</strong></p>
+</div>
+
+<a class="button"
+   href="${pageContext.request.contextPath}/room/add">
+    + Add Room
+</a>
+
+</div>
+
+<c:if test="${not empty errorMessage}">
+    <div class="error">${errorMessage}</div>
+</c:if>
+
+<div class="search">
+
+<form action="${pageContext.request.contextPath}/room/list"
+      method="get">
+
+<input type="text"
+       name="keyword"
+       value="${keyword}"
+       placeholder="Search room/property/status">
+
+<button type="submit">Search</button>
+
+<a href="${pageContext.request.contextPath}/room/list">
+    Clear
+</a>
+
+</form>
+
+</div>
+
+<div class="table-box">
+
+<c:choose>
+
+<c:when test="${not empty rooms}">
+
+<table>
+
+<tr>
+    <th>ID</th>
+    <th>Property</th>
+    <th>Room</th>
+    <th>Capacity</th>
+    <th>Sharing</th>
+    <th>Rent</th>
+    <th>Status</th>
+    <th>Actions</th>
+</tr>
+
+<c:forEach var="room" items="${rooms}">
+
+<tr>
+
+<td>${room.id}</td>
+
+<td>
+    ${room.propertyName}
+    <br>
+    <small>ID: ${room.propertyId}</small>
+</td>
+
+<td>${room.roomNumber}</td>
+<td>${room.capacity}</td>
+<td>${room.sharingType}</td>
+<td>₹ ${room.rentAmount}</td>
+<td>${room.status}</td>
+
+<td>
+
+<a href="${pageContext.request.contextPath}/room/edit?id=${room.id}">
+    Edit
+</a>
+
+<a href="${pageContext.request.contextPath}/room/delete?id=${room.id}"
+   onclick="return confirm('Delete this room?');">
+    Delete
+</a>
+
+</td>
+
+</tr>
+
+</c:forEach>
+
+</table>
+
+</c:when>
+
+<c:otherwise>
+    <p>No rooms found.</p>
+</c:otherwise>
+
+</c:choose>
+
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Property;
+import com.pgmanagement.service.PropertyService;
+
+@Controller
+public class PropertyController {
+
+    private final PropertyService propertyService;
+
+    public PropertyController(
+            PropertyService propertyService) {
+
+        this.propertyService = propertyService;
+    }
+
+    @GetMapping("/property/add")
+    public String showAddPropertyForm(
+            Model model) {
+
+        model.addAttribute(
+                "property",
+                new Property()
+        );
+
+        return "property-add";
+    }
+
+    @PostMapping("/property/save")
+    public String saveProperty(
+            @ModelAttribute Property property) {
+
+        boolean saved =
+                propertyService.addProperty(
+                        property
+                );
+
+        if (saved) {
+
+            return "redirect:/property/list";
+        }
+
+        return "property-add";
+    }
+
+    @GetMapping("/property/list")
+    public String listProperties(
+            @RequestParam(
+                    value = "keyword",
+                    required = false
+            )
+            String keyword,
+            Model model) {
+
+        List<Property> properties;
+
+        /*
+         * No keyword:
+         * Show all properties.
+         */
+        if (keyword == null
+                || keyword.trim().isEmpty()) {
+
+            properties =
+                    propertyService
+                            .getAllProperties();
+
+        } else {
+
+            /*
+             * Keyword present:
+             * Search properties.
+             */
+            properties =
+                    propertyService
+                            .searchProperties(
+                                    keyword.trim()
+                            );
+        }
+
+        model.addAttribute(
+                "properties",
+                properties
+        );
+
+        model.addAttribute(
+                "keyword",
+                keyword
+        );
+
+        return "property-list";
+    }
+
+    @GetMapping("/property/edit")
+    public String showEditPropertyForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Property property =
+                propertyService
+                        .getPropertyById(id);
+
+        model.addAttribute(
+                "property",
+                property
+        );
+
+        return "property-edit";
+    }
+
+    @PostMapping("/property/update")
+    public String updateProperty(
+            @ModelAttribute Property property) {
+
+        propertyService.updateProperty(
+                property
+        );
+
+        return "redirect:/property/list";
+    }
+
+    @GetMapping("/property/delete")
+    public String deleteProperty(
+            @RequestParam("id") int id) {
+
+        propertyService.deleteProperty(id);
+
+        return "redirect:/property/list";
+    }
+}

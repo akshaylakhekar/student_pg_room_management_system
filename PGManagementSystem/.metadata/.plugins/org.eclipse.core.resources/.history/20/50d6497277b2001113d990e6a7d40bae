@@ -1,0 +1,172 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.RoomAllocationDAO;
+import com.pgmanagement.model.RoomAllocation;
+
+@Service
+public class RoomAllocationService {
+
+    private final RoomAllocationDAO roomAllocationDAO;
+    private final RoomService roomService;
+
+    public RoomAllocationService(
+            RoomAllocationDAO roomAllocationDAO,
+            RoomService roomService) {
+
+        this.roomAllocationDAO = roomAllocationDAO;
+        this.roomService = roomService;
+    }
+
+    public boolean addAllocation(
+            RoomAllocation allocation) {
+
+        if ("Active".equalsIgnoreCase(
+                allocation.getStatus())) {
+
+            boolean alreadyAllocated =
+                    roomAllocationDAO
+                            .hasActiveAllocation(
+                                    allocation.getStudentId()
+                            );
+
+            if (alreadyAllocated) {
+
+                return false;
+            }
+        }
+
+        boolean saved =
+                roomAllocationDAO.addAllocation(
+                        allocation
+                );
+
+        if (saved) {
+
+            if ("Active".equalsIgnoreCase(
+                    allocation.getStatus())) {
+
+                roomService.updateRoomStatus(
+                        allocation.getRoomId(),
+                        "Occupied"
+                );
+            }
+        }
+
+        return saved;
+    }
+
+    public List<RoomAllocation>
+            getAllAllocations() {
+
+        return roomAllocationDAO
+                .getAllAllocations();
+    }
+
+    public List<RoomAllocation>
+            searchAllocations(
+                    String keyword) {
+
+        return roomAllocationDAO
+                .searchAllocations(keyword);
+    }
+
+    public RoomAllocation getAllocationById(
+            int id) {
+
+        return roomAllocationDAO
+                .getAllocationById(id);
+    }
+
+    public boolean updateAllocation(
+            RoomAllocation allocation) {
+
+        RoomAllocation oldAllocation =
+                roomAllocationDAO
+                        .getAllocationById(
+                                allocation.getId()
+                        );
+
+        if ("Active".equalsIgnoreCase(
+                allocation.getStatus())) {
+
+            boolean alreadyAllocated =
+                    roomAllocationDAO
+                            .hasActiveAllocation(
+                                    allocation.getStudentId()
+                            );
+
+            if (alreadyAllocated) {
+
+                if (!(oldAllocation.getStudentId()
+                        == allocation.getStudentId()
+                        && "Active".equalsIgnoreCase(
+                                oldAllocation.getStatus()))) {
+
+                    return false;
+                }
+            }
+        }
+
+        boolean updated =
+                roomAllocationDAO
+                        .updateAllocation(
+                                allocation
+                        );
+
+        if (updated) {
+
+            if (oldAllocation.getRoomId()
+                    != allocation.getRoomId()) {
+
+                roomService.updateRoomStatus(
+                        oldAllocation.getRoomId(),
+                        "Available"
+                );
+            }
+
+            if ("Active".equalsIgnoreCase(
+                    allocation.getStatus())) {
+
+                roomService.updateRoomStatus(
+                        allocation.getRoomId(),
+                        "Occupied"
+                );
+
+            } else {
+
+                roomService.updateRoomStatus(
+                        allocation.getRoomId(),
+                        "Available"
+                );
+            }
+        }
+
+        return updated;
+    }
+
+    public boolean deleteAllocation(
+            int id) {
+
+        RoomAllocation allocation =
+                roomAllocationDAO
+                        .getAllocationById(id);
+
+        boolean deleted =
+                roomAllocationDAO
+                        .deleteAllocation(id);
+
+        if (deleted) {
+
+            roomService.updateRoomStatus(
+                    allocation.getRoomId(),
+                    "Available"
+            );
+        }
+
+        return deleted;
+    }
+}

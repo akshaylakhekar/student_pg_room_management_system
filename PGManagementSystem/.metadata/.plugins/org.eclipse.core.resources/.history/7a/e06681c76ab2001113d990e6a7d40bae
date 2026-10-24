@@ -1,0 +1,44 @@
+package com.pgmanagement.service;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.pgmanagement.dao.PropertyDAO;
+import com.pgmanagement.model.Property;
+
+@Service
+public class PropertyService {
+
+    private final PropertyDAO propertyDAO;
+
+    // PropertyDAO Spring automatically inject karega
+    public PropertyService(PropertyDAO propertyDAO) {
+        this.propertyDAO = propertyDAO;
+    }
+
+    // Property save karne ke liye
+    public boolean addProperty(Property property) {
+        return propertyDAO.addProperty(property);
+    }
+
+    // Saari properties fetch karne ke liye
+    public List<Property> getAllProperties() {
+        return propertyDAO.getAllProperties();
+    }
+
+    // ID ke basis par property fetch karne ke liye
+    public Property getPropertyById(int id) {
+        return propertyDAO.getPropertyById(id);
+    }
+
+    // Property update karne ke liye
+    public boolean updateProperty(Property property) {
+        return propertyDAO.updateProperty(property);
+    }
+
+    // Property delete karne ke liye
+    public boolean deleteProperty(int id) {
+        return propertyDAO.deleteProperty(id);
+    }
+}

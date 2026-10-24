@@ -1,0 +1,17 @@
+package com.pgmanagement.dao;
+
+import java.sql.Connection;
+
+public class DBConnectionTest {
+
+    public static void main(String[] args) {
+
+        Connection connection = DBConnection.getConnection();
+
+        if (connection != null) {
+            System.out.println("✅ MySQL connection successful!");
+        } else {
+            System.out.println("❌ MySQL connection failed!");
+        }
+    }
+}

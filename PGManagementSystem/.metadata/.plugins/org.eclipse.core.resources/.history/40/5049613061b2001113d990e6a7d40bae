@@ -1,0 +1,91 @@
+package com.pgmanagement.controller;
+
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.pgmanagement.model.Room;
+import com.pgmanagement.service.RoomService;
+
+@Controller
+public class RoomController {
+
+    private final RoomService roomService;
+
+    // RoomService Spring automatically inject karega
+    public RoomController(RoomService roomService) {
+        this.roomService = roomService;
+    }
+
+    // Room add form show karta hai
+    @GetMapping("/room/add")
+    public String showAddRoomForm() {
+        return "room-add";
+    }
+
+    // Room ko database me save karta hai
+    @PostMapping("/room/save")
+    public String saveRoom(
+            @ModelAttribute Room room) {
+
+        boolean saved =
+                roomService.addRoom(room);
+
+        if (saved) {
+            return "redirect:/room/list";
+        }
+
+        return "room-add";
+    }
+
+    // Saare rooms ki list show karta hai
+    @GetMapping("/room/list")
+    public String listRooms(Model model) {
+
+        List<Room> rooms =
+                roomService.getAllRooms();
+
+        model.addAttribute("rooms", rooms);
+
+        return "room-list";
+    }
+
+    // Room edit form show karta hai
+    @GetMapping("/room/edit")
+    public String showEditRoomForm(
+            @RequestParam("id") int id,
+            Model model) {
+
+        Room room =
+                roomService.getRoomById(id);
+
+        model.addAttribute("room", room);
+
+        return "room-edit";
+    }
+
+    // Room update karta hai
+    @PostMapping("/room/update")
+    public String updateRoom(
+            @ModelAttribute Room room) {
+
+        roomService.updateRoom(room);
+
+        return "redirect:/room/list";
+    }
+
+    // Room delete karta hai
+    @GetMapping("/room/delete")
+    public String deleteRoom(
+            @RequestParam("id") int id) {
+
+        roomService.deleteRoom(id);
+
+        return "redirect:/room/list";
+    }
+}

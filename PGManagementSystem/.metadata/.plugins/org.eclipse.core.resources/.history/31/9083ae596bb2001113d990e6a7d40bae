@@ -1,0 +1,207 @@
+package com.pgmanagement.dao;
+
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.pgmanagement.model.RoomAllocation;
+
+@Repository
+public class RoomAllocationDAO {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public RoomAllocationDAO(
+            JdbcTemplate jdbcTemplate) {
+
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public boolean addAllocation(
+            RoomAllocation allocation) {
+
+        String sql = "INSERT INTO room_allocations "
+                   + "(student_id, room_id, allocation_date, checkout_date, status) "
+                   + "VALUES (?, ?, ?, ?, ?)";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                allocation.getStudentId(),
+                allocation.getRoomId(),
+                allocation.getAllocationDate(),
+                allocation.getCheckoutDate(),
+                allocation.getStatus()
+        );
+
+        return rows > 0;
+    }
+
+    public List<RoomAllocation> getAllAllocations() {
+
+        String sql =
+                "SELECT * FROM room_allocations "
+              + "ORDER BY id DESC";
+
+        return jdbcTemplate.query(
+                sql,
+                (rs, rowNum) -> {
+
+                    RoomAllocation allocation =
+                            new RoomAllocation();
+
+                    allocation.setId(
+                            rs.getInt("id")
+                    );
+
+                    allocation.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    allocation.setRoomId(
+                            rs.getInt("room_id")
+                    );
+
+                    if (rs.getDate(
+                            "allocation_date") != null) {
+
+                        allocation.setAllocationDate(
+                                rs.getDate(
+                                        "allocation_date"
+                                ).toLocalDate()
+                        );
+                    }
+
+                    if (rs.getDate(
+                            "checkout_date") != null) {
+
+                        allocation.setCheckoutDate(
+                                rs.getDate(
+                                        "checkout_date"
+                                ).toLocalDate()
+                        );
+                    }
+
+                    allocation.setStatus(
+                            rs.getString("status")
+                    );
+
+                    return allocation;
+                }
+        );
+    }
+
+    public RoomAllocation getAllocationById(
+            int id) {
+
+        String sql =
+                "SELECT * FROM room_allocations "
+              + "WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(
+                sql,
+                (rs, rowNum) -> {
+
+                    RoomAllocation allocation =
+                            new RoomAllocation();
+
+                    allocation.setId(
+                            rs.getInt("id")
+                    );
+
+                    allocation.setStudentId(
+                            rs.getInt("student_id")
+                    );
+
+                    allocation.setRoomId(
+                            rs.getInt("room_id")
+                    );
+
+                    if (rs.getDate(
+                            "allocation_date") != null) {
+
+                        allocation.setAllocationDate(
+                                rs.getDate(
+                                        "allocation_date"
+                                ).toLocalDate()
+                        );
+                    }
+
+                    if (rs.getDate(
+                            "checkout_date") != null) {
+
+                        allocation.setCheckoutDate(
+                                rs.getDate(
+                                        "checkout_date"
+                                ).toLocalDate()
+                        );
+                    }
+
+                    allocation.setStatus(
+                            rs.getString("status")
+                    );
+
+                    return allocation;
+                },
+                id
+        );
+    }
+
+    public boolean updateAllocation(
+            RoomAllocation allocation) {
+
+        String sql =
+                "UPDATE room_allocations SET "
+              + "student_id = ?, "
+              + "room_id = ?, "
+              + "allocation_date = ?, "
+              + "checkout_date = ?, "
+              + "status = ? "
+              + "WHERE id = ?";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                allocation.getStudentId(),
+                allocation.getRoomId(),
+                allocation.getAllocationDate(),
+                allocation.getCheckoutDate(),
+                allocation.getStatus(),
+                allocation.getId()
+        );
+
+        return rows > 0;
+    }
+
+    public boolean deleteAllocation(int id) {
+
+        String sql =
+                "DELETE FROM room_allocations "
+              + "WHERE id = ?";
+
+        int rows = jdbcTemplate.update(
+                sql,
+                id
+        );
+
+        return rows > 0;
+    }
+
+    public boolean hasActiveAllocation(
+            int studentId) {
+
+        String sql =
+                "SELECT COUNT(*) "
+              + "FROM room_allocations "
+              + "WHERE student_id = ? "
+              + "AND status = 'Active'";
+
+        Integer count =
+                jdbcTemplate.queryForObject(
+                        sql,
+                        Integer.class,
+                        studentId
+                );
+
+        return count != null && count > 0;
+    }
+}

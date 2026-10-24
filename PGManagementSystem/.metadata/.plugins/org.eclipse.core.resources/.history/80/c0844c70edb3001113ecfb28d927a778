@@ -1,0 +1,157 @@
+package com.pgmanagement.model;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public class RoomAllocation {
+
+    private int id;
+
+    private int studentId;
+
+    private int roomId;
+
+    private LocalDate allocationDate;
+
+    private LocalDate checkoutDate;
+
+    private String status;
+
+    // Display fields
+    private String studentName;
+
+    private String roomNumber;
+
+    private BigDecimal rentAmount;
+
+
+    public RoomAllocation() {
+    }
+
+
+    // =========================================================
+    // ID
+    // =========================================================
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+
+    // =========================================================
+    // STUDENT ID
+    // =========================================================
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+
+    // =========================================================
+    // ROOM ID
+    // =========================================================
+
+    public int getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(int roomId) {
+        this.roomId = roomId;
+    }
+
+
+    // =========================================================
+    // ALLOCATION DATE
+    // =========================================================
+
+    public LocalDate getAllocationDate() {
+        return allocationDate;
+    }
+
+    public void setAllocationDate(
+            LocalDate allocationDate) {
+
+        this.allocationDate = allocationDate;
+    }
+
+
+    // =========================================================
+    // CHECKOUT DATE
+    // =========================================================
+
+    public LocalDate getCheckoutDate() {
+        return checkoutDate;
+    }
+
+    public void setCheckoutDate(
+            LocalDate checkoutDate) {
+
+        this.checkoutDate = checkoutDate;
+    }
+
+
+    // =========================================================
+    // STATUS
+    // =========================================================
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+
+    // =========================================================
+    // STUDENT NAME
+    // =========================================================
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(
+            String studentName) {
+
+        this.studentName = studentName;
+    }
+
+
+    // =========================================================
+    // ROOM NUMBER
+    // =========================================================
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(
+            String roomNumber) {
+
+        this.roomNumber = roomNumber;
+    }
+
+
+    // =========================================================
+    // RENT AMOUNT
+    // =========================================================
+
+    public BigDecimal getRentAmount() {
+        return rentAmount;
+    }
+
+    public void setRentAmount(
+            BigDecimal rentAmount) {
+
+        this.rentAmount = rentAmount;
+    }
+}
